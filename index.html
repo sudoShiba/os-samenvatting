@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>xv6 Lab Documentatie - KU Leuven</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css">
+  <style>
+    :root {
+      --theme-color: #42b983;
+    }
+    .sidebar { background-color: #282c34; border-right: 1px solid #3e4451; }
+    code { background-color: #2c313a !important; color: #abb2bf !important; }
+    pre { background-color: #282c34 !important; }
+  </style>
+</head>
+<body>
+  <div id="app">Laden van de xv6 Expert Gids...</div>
+  <script>
+    window.$docsify = {
+      name: 'xv6 Exam Prep @KUL',
+      repo: '',
+      loadSidebar: true,
+      subMaxLevel: 4,
+      basePath: './docs/',
+      auto2top: true,
+      themeColor: '#42b983',
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: 'Zoek in code of gids...',
+        noData: 'Geen resultaten gevonden',
+        depth: 6
+      }
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+</body>
+</html>

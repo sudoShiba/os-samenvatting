@@ -1,0 +1,90 @@
+<!-- docs/_sidebar.md -->
+
+* [Home](README.md)
+
+* [**Course Notes**](course_notes/README.md)
+  * [Virtualization](course_notes/virtualization.md)
+  * [Concurrency](course_notes/concurrency.md)
+  * [Persistence](course_notes/persistence.md)
+
+* **Lab Sessies**
+  * [Lab 1: OS Interfaces](os-interfaces.md)
+  * [Lab 2: System Calls](syscalls-lab.md)
+  * [Lab 3: Context Switch](context-switch.md)
+  * [Lab 4: Page Tables](page-tables.md)
+  * [Lab 5: Page Faults](page-faults.md)
+  * [Lab 6: File Systems](file-systems.md)
+  * [Lab 7: Advanced VM](advanced-vm.md)
+
+* **Kernel Architectuur**
+  * [Traps & Trampoline](traps-trampoline.md)
+  * [Trapframe Offsets](trapframe-offsets.md)
+  * [Calling Conventions](calling-conventions.md)
+  * [Per-Process State](per-process-state.md)
+
+* **Handleidingen**
+  * [Key Files](key-files.md)
+  * [Syscall Toevoegen](adding-syscall.md)
+  * [User Program Toevoegen](adding-user-program.md)
+  * [User Library Toevoegen](adding-lib-function.md)
+  * [Kernel Helpers](kernel-helpers.md)
+
+* **xv6 API Reference**
+  * [Process API (fork, etc.)](process-api.md)
+  * [Memory & File API](memory-file-api.md)
+
+* **Referentie**
+  * [Exam Strategy](exam-strategy.md)
+  * [Summary of Labs](summary.md)
+  * [Decision Guide](decision-guide.md)
+  * [Common Pitfalls](pitfalls.md)
+
+* **Kernel Space API**
+  * [bio.c](kernel_api/bio.c.md)
+  * [console.c](kernel_api/console.c.md)
+  * [exec.c](kernel_api/exec.c.md)
+  * [file.c](kernel_api/file.c.md)
+  * [fs.c](kernel_api/fs.c.md)
+  * [kalloc.c](kernel_api/kalloc.c.md)
+  * [log.c](kernel_api/log.c.md)
+  * [main.c](kernel_api/main.c.md)
+  * [pipe.c](kernel_api/pipe.c.md)
+  * [plic.c](kernel_api/plic.c.md)
+  * [printf.c](kernel_api/printf.c.md)
+  * [proc.c](kernel_api/proc.c.md)
+  * [sleeplock.c](kernel_api/sleeplock.c.md)
+  * [spinlock.c](kernel_api/spinlock.c.md)
+  * [start.c](kernel_api/start.c.md)
+  * [string.c](kernel_api/string.c.md)
+  * [syscall.c](kernel_api/syscall.c.md)
+  * [sysfile.c](kernel_api/sysfile.c.md)
+  * [sysproc.c](kernel_api/sysproc.c.md)
+  * [trap.c](kernel_api/trap.c.md)
+  * [uart.c](kernel_api/uart.c.md)
+  * [virtio_disk.c](kernel_api/virtio_disk.c.md)
+  * [vm.c](kernel_api/vm.c.md)
+
+* **User Code API**
+  * [cat.c](user_api/cat.c.md)
+  * [dorphan.c](user_api/dorphan.c.md)
+  * [echo.c](user_api/echo.c.md)
+  * [forktest.c](user_api/forktest.c.md)
+  * [forphan.c](user_api/forphan.c.md)
+  * [grep.c](user_api/grep.c.md)
+  * [grind.c](user_api/grind.c.md)
+  * [halt.c](user_api/halt.c.md)
+  * [init.c](user_api/init.c.md)
+  * [kill.c](user_api/kill.c.md)
+  * [ln.c](user_api/ln.c.md)
+  * [logstress.c](user_api/logstress.c.md)
+  * [ls.c](user_api/ls.c.md)
+  * [mkdir.c](user_api/mkdir.c.md)
+  * [printf.c](user_api/printf.c.md)
+  * [rm.c](user_api/rm.c.md)
+  * [sh.c](user_api/sh.c.md)
+  * [stressfs.c](user_api/stressfs.c.md)
+  * [ulib.c](user_api/ulib.c.md)
+  * [umalloc.c](user_api/umalloc.c.md)
+  * [usertests.c](user_api/usertests.c.md)
+  * [wc.c](user_api/wc.c.md)
+  * [zombie.c](user_api/zombie.c.md)
