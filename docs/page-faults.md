@@ -105,3 +105,14 @@ int copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len) {
 }
 ```
 **Exam Tip:** Use a custom flag for `PTE_COW`. In xv6-riscv, bit 8 or 9 (RSW bits) are usually safe to use.
+
+## 5. Exam Example: Page Deduplication
+Page deduplication is an optimization technique that identifies identical physical pages in memory and merges them into a single read-only page to save RAM.
+
+### Implementation steps:
+1.  **Identification:** A system call (e.g., `dedup()`) loops through the page tables to find physical pages in the heap.
+2.  **Comparison:** The contents of these pages are compared to find duplicates.
+3.  **Merging:** Duplicate pages are remapped to a single physical page.
+4.  **COW Semantics:** The merged page is marked as read-only. If a process tries to write to it later, the standard Copy-on-Write logic (Step 3 above) will transparently create a new private copy for that process.
+
+**Advantage:** Significant memory savings when multiple processes (or even the same process) have identical data in different pages.
