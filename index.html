@@ -27,15 +27,18 @@
       auto2top: true,
       themeColor: '#42b983',
       search: {
-        maxAge: 86400000,
+        maxAge: 86400000, // 1 day
         paths: 'auto',
-        placeholder: 'Zoek in code of gids...',
-        noData: 'Geen resultaten gevonden',
-        depth: 6
+        placeholder: 'Typ om te zoeken...',
+        noData: 'Geen resultaten!',
+        // Zorg dat de koppen tot niveau 6 worden geïndexeerd
+        depth: 6,
+        hideOtherSidebarContent: false,
       }
     }
   </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- Belangrijk: Docsify core eerst, dan de search plugin -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+# xv6 Source Code
+kul-xv6/
+xv6-riscv-book/
+
+# Build artifacts (binaries, objects, images)
+*.o
+*.d
+*.img
+kernel/kernel
+user/_*
+mkfs/mkfs
+
+# OS specific files
+.DS_Store
+
+# Temporary / Generated files
+generate_api_docs.py
+temp_slides/
+EOF
