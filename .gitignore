@@ -1,6 +1,7 @@
 # xv6 Source Code
 kul-xv6/
 xv6-riscv-book/
+course_notes
 
 # Build artifacts (binaries, objects, images)
 *.o
@@ -16,4 +17,3 @@ mkfs/mkfs
 # Temporary / Generated files
 generate_api_docs.py
 temp_slides/
-EOF
