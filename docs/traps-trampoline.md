@@ -16,6 +16,14 @@ Since the kernel needs a place to save the user's registers (so it can restore t
 - **Contents:** It stores all 32 RISC-V registers, the kernel stack pointer, the address of the kernel's trap handler (`usertrap`), and the kernel page table pointer.
 - **Source:** Defined as `struct trapframe` in `kernel/proc.h`.
 
+## Virtual Dynamically-linked Shared Object (vDSO)
+Om de overhead van system calls te vermijden voor vaak opgevraagde data (zoals de systeemtijd of ticks), gebruikt men **vDSO**.
+
+- **Principe:** De kernel maakt een page in het fysieke RAM en houdt hier data bij.
+- **Mapping:** Deze page wordt gemapt in de user space van **elk** proces met `PTE_R | PTE_U` permissies.
+- **Voordeel:** Een proces kan nu direct uit zijn eigen geheugen lezen in plaats van een dure trap naar de kernel te doen.
+- **Beveiliging:** Geef nooit `PTE_W` permissie mee aan user mode voor vDSO pages, anders kan een proces systeemdata overschrijven!
+
 ## The Trap Flow
 
 1.  **User Space:** A trap occurs (e.g., `ecall`). The hardware automatically:
@@ -31,6 +39,12 @@ Since the kernel needs a place to save the user's registers (so it can restore t
 3.  **Kernel (`usertrap`):**
     - Identifies the cause of the trap (`scause`).
     - Dispatches to `syscall()`, a device driver, or handles an exception (like a page fault).
+
+### Supervisor Exception Codes
+The `scause` register indicates the cause of the trap. Below is a reference table of the supervisor exception codes:
+
+![Supervisor Exception Codes](img/supervisor-exception-codes.png)
+
 4.  **Returning (`usertrapret` -> `userret`):**
     - The reverse process occurs. `userret` switches back to the user page table, restores the user registers from the trapframe, and uses the `sret` instruction to return to user space.
 

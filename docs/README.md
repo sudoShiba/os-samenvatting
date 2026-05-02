@@ -12,6 +12,11 @@ Welcome to the comprehensive documentation for the xv6 labs at KU Leuven. This s
 - [Lab 6: File Systems](file-systems.md)
 - [Lab 7: Advanced Virtual Memory](advanced-vm.md)
 
+## PAL Sessies
+
+- [PAL Sessie 1 (PDF)](../PAL-sessie1.pdf)
+- [PAL Sessie 2 (PDF)](../PAL-sessie2.pdf)
+
 ## Reference Material
 
 - [Key Files](key-files.md)

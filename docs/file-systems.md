@@ -1,6 +1,29 @@
 # Lab 6: File Systems (Expert Depth)
 
-File system tasks require manipulating inodes and handling path lookup.
+De disk in xv6 is opgedeeld in blokken van **1024 bytes** (BSIZE).
+
+## 0. Disk Layout & Inode Limits
+De disklayout bepaalt waar welk soort data staat:
+`[ boot | super | log | inodes | bit map | data ... ]`
+- **boot:** Bevat de boot code (blok 0).
+- **super:** Bevat metainformatie over het bestandssysteem.
+- **log:** Tijdelijk "kladblok" voor transacties om consistentie te bewaren bij crashes.
+- **inodes:** Bevat alle kenmerken (type, grootte, locatie) van bestanden.
+- **bitmap:** Houdt bij welke datablokken bezet zijn.
+- **data:** De eigenlijke inhoud van de bestanden.
+
+### Inode Blokken & Bestandsgrootte
+Een `dinode` (on-disk inode) in xv6 heeft:
+- **12 directe blokken:** Deze wijzen rechtstreeks naar datablokken.
+- **1 indirect blok:** Dit wijst naar een blok dat zelf weer wijst naar datablokken.
+    - Een indirect blok kan `BSIZE / sizeof(uint)` = `1024 / 4` = **256** bloknummers bevatten.
+- **Totaal aantal blokken per bestand:** 12 (direct) + 256 (indirect) = **268 blokken**.
+- **Maximale bestandsgrootte:** 268 * 1024 bytes ≈ **268 KB**.
+
+### Directory Limits
+Een directory entry (`struct dirent`) is **16 bytes** groot (2 bytes voor inum en 14 bytes voor de naam).
+- **Entries per blok:** `1024 / 16` = **64 entries**.
+- **Maximaal aantal entries per directory:** 268 blokken * 64 entries/blok = **17152 entries**.
 
 ## 1. Implementing `symlink`
 A symlink is an inode of type `T_SYMLINK` that stores the target path in its data blocks.

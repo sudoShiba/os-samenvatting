@@ -25,6 +25,7 @@
 * **Handleidingen**
   * [Key Files](key-files.md)
   * [Syscall Toevoegen](adding-syscall.md)
+  * [vDSO Toevoegen](adding-vdso.md)
   * [User Program Toevoegen](adding-user-program.md)
   * [User Library Toevoegen](adding-lib-function.md)
   * [Kernel Helpers](kernel-helpers.md)
@@ -32,6 +33,10 @@
 * **xv6 API Reference**
   * [Process API (fork, etc.)](process-api.md)
   * [Memory & File API](memory-file-api.md)
+
+* **PAL Sessies**
+  * [PAL Sessie 1 (PDF)](../PAL-sessie1.pdf)
+  * [PAL Sessie 2 (PDF)](../PAL-sessie2.pdf)
 
 * **Referentie**
   * [Exam Strategy](exam-strategy.md)

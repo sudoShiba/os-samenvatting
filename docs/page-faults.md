@@ -1,6 +1,20 @@
-# Lab 5: Copy-on-Write (Expert Depth)
+# Lab 5: Page Faults & Copy-on-Write (Expert Depth)
 
-Copy-on-Write (COW) is a fundamental optimization. In the exam, you'll need to handle reference counts and trap-based page allocation.
+Een **Page Fault** is een hardware trap die optreedt als een programma geheugen opvraagt dat de MMU niet kan vertalen of waarvoor de permissies niet kloppen.
+
+## 0. Page Fault Types & Scenario's
+Bij een trap vult de CPU twee registers in:
+- **`scause` (Supervisor Cause):** Vertelt waarom de trap gebeurde.
+    - **Code 12:** Instruction Page Fault (CPU kan instructie op dit adres niet laden).
+    - **Code 13:** Load Page Fault (CPU kan data op dit adres niet lezen).
+    - **Code 15:** Store Page Fault (CPU kan data op dit adres niet schrijven).
+- **`stval` (Supervisor Trap Value):** Bevat het virtuele adres dat de fout veroorzaakte.
+
+### Veelvoorkomende Scenario's
+1.  **Segmentation Fault:** Het programma probeert geheugen te lezen dat niet gemapt is (`PTE_V=0`) of probeert te schrijven naar read-only geheugen (`PTE_W=0`) zonder dat dit een geoptimaliseerd scenario is (zoals CoW). De kernel zal het proces in dit geval killen.
+2.  **Demand Paging / Lazy Allocation:** Het programma vraagt om RAM via `sbrk`, maar het OS past enkel `p->sz` aan zonder echt pages te mappen. Pas wanneer het proces de page echt aanraakt, krijgt het een fault. De kernel ziet dat het adres binnen `p->sz` ligt, alloceert dan pas een page met `kalloc()`, mapt deze met `mappages()` en laat de CPU de instructie opnieuw proberen.
+3.  **Swapping:** De page bestaat, maar werd tijdelijk naar de harde schijf geschreven omdat het RAM vol was. Het OS pauzeert het proces, laadt de data van disk naar RAM, updatet de PTE en hervat het proces. (Standaard xv6 doet dit niet).
+4.  **Copy-on-Write (CoW):** Zie sectie hieronder.
 
 ## 1. Reference Counting (`kernel/kalloc.c`)
 Modify the allocator to track how many page tables point to a physical page.

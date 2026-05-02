@@ -1,6 +1,27 @@
 # Lab 4: Page Tables (Expert Depth)
 
-Page tables are a core component of the exam. You must understand how to walk them, map pages, and implement vDSO.
+## 0. RISC-V Sv39 & PTE Flags
+xv6 RISC-V gebruikt de **Sv39** standaard voor virtual memory.
+
+### Adres Structuur
+- **39 bits** worden gebruikt van een virtueel adres.
+- **27 bits** voor het Virtual Page Number (VPN), **12 bits** voor de offset (4096 bytes per page).
+- De VPN is opgedeeld in 3 niveaus van elk **9 bits** (3 niveaus * 9 bits = 27 bits).
+
+![Detailed Address Translation](img/detailed-address-translation.png)
+
+### Page Table Entry (PTE) Flags
+De onderste 10 bits van een PTE bevatten de flags:
+- **V (Valid):** Indien 0, doet de CPU alsof de PTE niet bestaat (veroorzaakt een page fault).
+- **R (Readable):** Mag gelezen worden.
+- **W (Writable):** Mag naar geschreven worden.
+- **X (Executable):** Bevat uitvoerbare code.
+- **U (User):** Indien 1, mag user mode aan deze entry. Indien 0, enkel de kernel.
+- **G (Global):** Mapping is geldig in alle virtual address spaces (voorkomt TLB flush bij context switch).
+- **A (Accessed):** Hardware zet dit op 1 als de page gelezen/geschreven wordt.
+- **D (Dirty):** Hardware zet dit op 1 als er naar de page geschreven wordt.
+
+**Note:** Als `R`, `W` en `X` allemaal 0 zijn en `V=1`, dan is de PTE een pointer naar de volgende page table in de boomstructuur.
 
 ## 1. `vmprintmappings` (Walking the Tree)
 Recursive function to print all leaf nodes in a page table.
@@ -31,45 +52,12 @@ static void print_pagetable(pagetable_t pagetable, uint64 base_va, int level)
 ```
 
 ## 2. vDSO Implementation
-Mapping a shared read-only page to speed up system calls like `uptime`.
+Mapping a shared read-only page to speed up system calls like `uptime`. Zie het stappenplan [vDSO Toevoegen](adding-vdso.md) voor de volledige walkthrough.
 
-### Linker Script (`kernel/kernel.ld`)
-The `.vdso` section must be page-aligned and exactly one page.
-```ld
-  .vdso : {            /* Start an "output section" named .vdso */
-    . = ALIGN(0x1000); /* Align (.) on a page boundary */
-    _vdso_start = .;   /* Define _vdso_start */
-    *(.vdso);          /* Put all input .vdso sections here */
-    . = ALIGN(0x1000); /* Align on page boundary */
-    ASSERT(. - _vdso_start == 0x1000, "error: vdso section exceeds one page");
-  }
-```
-
-### Global Variables (**`kernel/trap.c`**)
-```c
-uint ticks __attribute__((section(".vdso")));
-```
-
-### Mapping in **`kernel/proc.c`**
-In `proc_pagetable()`:
-```c
-extern char _vdso_start[];
-
-// map the vDSO page just below the trapframe page
-if(mappages(pagetable, VDSOPAGE, PGSIZE, (uint64)_vdso_start, PTE_R | PTE_U) < 0){
-  uvmunmap(pagetable, TRAPFRAME, 1, 0);
-  uvmunmap(pagetable, TRAMPOLINE, 1, 0);
-  uvmfree(pagetable, 0);
-  return 0;
-}
-```
-
-### User Library (**`user/ulib.c`** or **`user/fastuptime.c`**)
-```c
-uint fastuptime(void) {
-  return *((uint *) VDSOPAGE);
-}
-```
+### Kernpunten:
+- **Linker Script:** De `.vdso` sectie moet pagina-gelijnd zijn en exact één pagina groot.
+- **Mapping:** Gebeurt in `proc_pagetable()` met `PTE_R | PTE_U` (geen `PTE_W`!).
+- **User Space:** Data kan direct via een pointer op het bekende virtuele adres worden gelezen.
 
 ## 3. Basic `mmap`
 Implement anonymous private memory mapping.

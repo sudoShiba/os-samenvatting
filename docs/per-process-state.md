@@ -16,6 +16,13 @@ Also defined in **`kernel/proc.h`**, the `struct cpu` contains information about
 - **`c->proc`**: A pointer to the `struct proc` currently running on this CPU.
 - **`c->context`**: The kernel-level context to switch back to when the scheduler is running.
 
+## Adding Custom State (Bookkeeping)
+Soms moet je extra data onthouden over een proces (bv. hoe vaak een syscall is aangeroepen). Dit doe je als volgt:
+
+1.  **Breid `struct proc` uit (`kernel/proc.h`):** Voeg je nieuwe variabele toe aan de struct. Gebruik `uint64` voor geheugenadressen (xv6 is een 64-bit OS).
+2.  **Initialiseer in `allocproc` (`kernel/proc.c`):** Zet je nieuwe veld op 0 of NULL. Dit is cruciaal omdat C geheugen niet automatisch wist; zonder initialisatie bevat je variabele willekeurige "garbage data".
+3.  **Overerving in `fork` (`kernel/proc.c`):** Indien de data moet worden doorgegeven aan child processen, kopieer de waarde dan in de `fork()` functie.
+
 ## Context Switch Mechanism
 When xv6 switches from process A to process B:
 1. Process A enters the kernel via a trap.
