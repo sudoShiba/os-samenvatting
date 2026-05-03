@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/file.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `fileinit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de bestandstabel door de bijbehorende lock aan te maken.
 
 ```c
 

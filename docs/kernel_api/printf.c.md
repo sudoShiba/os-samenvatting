@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/printf.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `printint()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpsubroutine die een integer omzet naar een string in een opgegeven grondtal en deze afdrukt via de console.
 
 ```c
 
@@ -36,7 +36,7 @@ printint(long long xx, int base, int sign)
 ```
 
 ## `printptr()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpsubroutine die een pointer-adres in hexadecimale notatie afdrukt naar de console.
 
 ```c
 
@@ -132,7 +132,7 @@ printf(char *fmt, ...)
 ```
 
 ## `panic()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Drukt een foutmelding af en stopt de uitvoering van de kernel permanent.
 
 ```c
 
@@ -151,7 +151,7 @@ panic(char *s)
 ```
 
 ## `printfinit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de printf-lock om gelijktijdige toegang tot de console-output te synchroniseren.
 
 ```c
 

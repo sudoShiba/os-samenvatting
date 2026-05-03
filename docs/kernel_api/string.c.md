@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/string.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `memset()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vult een geheugenblok met een specifieke byte-waarde.
 
 ```c
 #include "types.h"
@@ -22,7 +22,7 @@ memset(void *dst, int c, uint n)
 ```
 
 ## `memcmp()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vergelijkt twee geheugenblokken byte voor byte.
 
 ```c
 
@@ -45,7 +45,7 @@ memcmp(const void *v1, const void *v2, uint n)
 ```
 
 ## `memmove()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Kopieert een geheugenblok naar een andere locatie, waarbij overlappende gebieden veilig worden afgehandeld.
 
 ```c
 
@@ -87,7 +87,7 @@ memcpy(void *dst, const void *src, uint n)
 ```
 
 ## `strncmp()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vergelijkt twee strings tot een maximaal aantal karakters.
 
 ```c
 
@@ -104,7 +104,7 @@ strncmp(const char *p, const char *q, uint n)
 ```
 
 ## `strncpy()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Kopieert een string naar een buffer tot een maximaal aantal karakters.
 
 ```c
 
@@ -144,7 +144,7 @@ safestrcpy(char *s, const char *t, int n)
 ```
 
 ## `strlen()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Berekent de lengte van een nul-beëindigde string.
 
 ```c
 

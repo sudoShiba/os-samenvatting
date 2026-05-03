@@ -11,108 +11,147 @@ Bij een trap vult de CPU twee registers in:
 - **`stval` (Supervisor Trap Value):** Bevat het virtuele adres dat de fout veroorzaakte.
 
 ### Veelvoorkomende Scenario's
-1.  **Segmentation Fault:** Het programma probeert geheugen te lezen dat niet gemapt is (`PTE_V=0`) of probeert te schrijven naar read-only geheugen (`PTE_W=0`) zonder dat dit een geoptimaliseerd scenario is (zoals CoW). De kernel zal het proces in dit geval killen.
-2.  **Demand Paging / Lazy Allocation:** Het programma vraagt om RAM via `sbrk`, maar het OS past enkel `p->sz` aan zonder echt pages te mappen. Pas wanneer het proces de page echt aanraakt, krijgt het een fault. De kernel ziet dat het adres binnen `p->sz` ligt, alloceert dan pas een page met `kalloc()`, mapt deze met `mappages()` en laat de CPU de instructie opnieuw proberen.
-3.  **Swapping:** De page bestaat, maar werd tijdelijk naar de harde schijf geschreven omdat het RAM vol was. Het OS pauzeert het proces, laadt de data van disk naar RAM, updatet de PTE en hervat het proces. (Standaard xv6 doet dit niet).
-4.  **Copy-on-Write (CoW):** Zie sectie hieronder.
+1.  **Segmentation Fault:** Het programma probeert geheugen te lezen dat niet gemapt is (`PTE_V=0`) of probeert te schrijven naar read-only geheugen (`PTE_W=0`).
+2.  **Demand Paging / Lazy Allocation:** Het programma vraagt om RAM via `sbrk`, maar het OS stelt de allocatie uit.
+3.  **Copy-on-Write (CoW):** Fork deelt pagina's read-only en kopieert ze pas bij een Store Page Fault.
 
 ## 1. Reference Counting (`kernel/kalloc.c`)
-Modify the allocator to track how many page tables point to a physical page.
+De allocator moet bijhouden hoeveel pagetables naar een fysieke pagina verwijzen met `kincref`.
 ```c
 int refcount[PHYSTOP / PGSIZE];
 
-void kref(void *pa) {
+void kincref(void *pa)
+{
   acquire(&kmem.lock);
   refcount[PGROUNDDOWN((uint64)pa - KERNBASE) / PGSIZE]++;
   release(&kmem.lock);
 }
 
-int kdecref(void *pa) {
+int kdecref(void *pa)
+{
   acquire(&kmem.lock);
   int count = --refcount[PGROUNDDOWN((uint64)pa - KERNBASE) / PGSIZE];
   release(&kmem.lock);
   return count;
 }
 
-void kfree(void *pa) {
-  if (kdecref(pa) > 0) return; // Only free if last reference
-  // ... standard kfree logic ...
+void
+kfree(void *pa)
+{
+  struct run *r;
+  if (kdecref(pa) > 0)
+    return;
+  // ... rest van standaard kfree ...
 }
 
-void* kalloc(void) {
-  // ... standard kalloc logic ...
-  if(r) refcount[((uint64)r - KERNBASE) / PGSIZE] = 1;
-  return (void*)r;
+void *
+kalloc(void)
+{
+  struct run *r;
+  acquire(&kmem.lock);
+  r = kmem.freelist;
+  if(r) {
+    kmem.freelist = r->next;
+    refcount[((uint64)r - KERNBASE) / PGSIZE] = 1;
+  }
+  release(&kmem.lock);
+  // ...
 }
 ```
 
-## 2. Modifying `uvmcopy` (COW Fork)
-Instead of copying, share the page and mark it as COW.
+## 2. Modifying `uvmcopy` (COW Fork in `kernel/vm.c`)
+In plaats van te kopiëren, delen we de pagina en markeren deze als `PTE_COW`.
 ```c
-int uvmcopy(pagetable_t old, pagetable_t new, uint64 sz) {
-  // ... loop over i from 0 to sz ...
-  pte = walk(old, i, 0);
-  pa = PTE2PA(*pte);
-  
-  if (*pte & PTE_U) {
-    if (*pte & PTE_W) {
-      *pte = (*pte & ~PTE_W) | PTE_COW; // Clear Write, Set COW
-    }   
-    if(mappages(new, i, PGSIZE, pa, PTE_FLAGS(*pte)) != 0) goto err;
-    kref((void *)pa); // Important!
+int
+uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
+{
+  pte_t *pte;
+  uint64 pa, i;
+
+  for(i = 0; i < sz; i += PGSIZE){
+    if((pte = walk(old, i, 0)) == 0 || (*pte & PTE_V) == 0)
+      continue;
+
+    pa = PTE2PA(*pte);
+    if (*pte & PTE_U) {
+      if (*pte & PTE_W) {
+        *pte = (*pte & ~PTE_W) | PTE_COW;
+      }   
+      if(mappages(new, i, PGSIZE, pa, PTE_FLAGS(*pte)) != 0)
+        goto err;
+      kincref((void *)pa);
+    } else {
+      // Kopieer kernel/stack pagina's zoals normaal
+      char *mem = kalloc();
+      memmove(mem, (char*)pa, PGSIZE);
+      if(mappages(new, i, PGSIZE, (uint64)mem, PTE_FLAGS(*pte)) != 0) goto err;
+    }
   }
+  return 0;
+ err:
+  uvmunmap(new, 0, i / PGSIZE, 1);
+  return -1;
 }
 ```
 
 ## 3. Handling the Fault (`vmfault` in `kernel/vm.c`)
-When a process writes to a COW page, it triggers a "Store Page Fault".
+Deze functie handelt zowel Lazy Allocation als COW af.
 ```c
-uint64 vmfault(pagetable_t pagetable, uint64 va, int read) {
+uint64
+vmfault(pagetable_t pagetable, uint64 va, int read)
+{
   struct proc *p = myproc();
+  if (va >= p->sz) return 0;
   va = PGROUNDDOWN(va);
   pte_t *pte = walk(pagetable, va, 0);
 
-  if (pte && (*pte & PTE_V) && (*pte & PTE_COW)) {
-    // 1. Allocate new page
-    char *mem = kalloc();
-    if(mem == 0) return 0;
-    
-    // 2. Copy old content
-    memmove(mem, (void *)PTE2PA(*pte), PGSIZE);
-    
-    // 3. Remap with PTE_W and without PTE_COW
-    uint flags = (PTE_FLAGS(*pte) & ~PTE_COW) | PTE_W;
-    uvmunmap(pagetable, va, 1, 1); // This calls kfree/kdecref
-    if (mappages(p->pagetable, va, PGSIZE, (uint64)mem, flags) != 0) {
-      kfree(mem); return 0;
+  uint64 mem = 0;
+  int new_flags = 0;
+
+  if (pte && *pte & PTE_V){
+    if (!(*pte & PTE_W) && *pte & PTE_COW) {
+      // COW case
+      mem = (uint64)kalloc();
+      if(mem == 0) return 0;
+      memmove((void *)mem, (void *)PTE2PA(*pte), PGSIZE);
+      new_flags = (PTE_FLAGS(*pte) & ~PTE_COW) | PTE_W;
+      uvmunmap(pagetable, va, 1, 1); // decref oude pagina
+    } else {
+      return 0; // Ongeldige fault op aanwezige pagina
     }
-    return (uint64)mem;
+  } else {
+    // Lazy allocation case
+    mem = (uint64) kalloc();
+    if(mem == 0) return 0;
+    memset((void *) mem, 0, PGSIZE);
+    new_flags = PTE_W|PTE_U|PTE_R;
   }
-  return 0;
+
+  if (mappages(p->pagetable, va, PGSIZE, mem, new_flags) != 0) {
+    kfree((void *)mem);
+    return 0;
+  }
+  return mem;
 }
 ```
 
-## 4. Updates to `copyout` and `copyin`
-Don't forget that `copyout` (kernel writing to user) must also trigger the COW logic.
+## 4. Updates to `copyout` (`kernel/vm.c`)
+Cruciaal: de COW-check moet in een `else` staan na de lazy-check.
 ```c
-int copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len) {
-  // ... inside loop ...
-  pte = walk(pagetable, va0, 0);
-  if(*pte & PTE_COW) {
-    if(vmfault(pagetable, va0, 0) == 0) return -1;
+int
+copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
+{
+  // ... loop ...
+  pa0 = walkaddr(pagetable, va0);
+  if(pa0 == 0) {
+    if((pa0 = vmfault(pagetable, va0, 0)) == 0) return -1;
+  } else {
+    // Check voor COW op een reeds gemapte pagina
+    pte = walk(pagetable, va0, 0);
+    if(*pte & PTE_COW) {
+      if((pa0 = vmfault(pagetable, va0, 0)) == 0) return -1;
+    }
   }
-  // ... standard copyout ...
+  // ... memmove ...
 }
 ```
-**Exam Tip:** Use a custom flag for `PTE_COW`. In xv6-riscv, bit 8 or 9 (RSW bits) are usually safe to use.
-
-## 5. Exam Example: Page Deduplication
-Page deduplication is an optimization technique that identifies identical physical pages in memory and merges them into a single read-only page to save RAM.
-
-### Implementation steps:
-1.  **Identification:** A system call (e.g., `dedup()`) loops through the page tables to find physical pages in the heap.
-2.  **Comparison:** The contents of these pages are compared to find duplicates.
-3.  **Merging:** Duplicate pages are remapped to a single physical page.
-4.  **COW Semantics:** The merged page is marked as read-only. If a process tries to write to it later, the standard Copy-on-Write logic (Step 3 above) will transparently create a new private copy for that process.
-
-**Advantage:** Significant memory savings when multiple processes (or even the same process) have identical data in different pages.

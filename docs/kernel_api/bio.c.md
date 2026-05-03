@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/bio.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `binit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de buffer cache door de bcache lock aan te maken en een dubbel gelinkte lijst van NBUF buffers op te zetten.
 
 ```c
 

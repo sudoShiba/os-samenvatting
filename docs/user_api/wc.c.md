@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/wc.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `wc()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Telt het aantal regels, woorden en karakters in een bestand of invoerstroom.
 
 ```c
 #include "kernel/types.h"
@@ -44,7 +44,7 @@ wc(int fd, char *name)
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de wc-utility; opent bestanden of leest van de standaardinvoer om statistieken te berekenen.
 
 ```c
 

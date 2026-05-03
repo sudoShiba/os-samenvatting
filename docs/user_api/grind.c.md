@@ -35,7 +35,7 @@ do_rand(unsigned long *ctx)
 ```
 
 ## `rand()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Genereert een pseudo-willekeurig getal.
 
 ```c
 
@@ -50,7 +50,7 @@ rand(void)
 ```
 
 ## `go()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voert een oneindige lus uit van willekeurige systeemoproepen en bestandsbewerkingen om het systeem te testen.
 
 ```c
 
@@ -303,7 +303,7 @@ go(int which_child)
 ```
 
 ## `iter()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Start twee kindprocessen die de go-functie uitvoeren en wacht op hun resultaat.
 
 ```c
 
@@ -350,7 +350,7 @@ iter()
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma dat herhaaldelijk de iter-functie aanroept om het systeem continu te belasten.
 
 ```c
 

@@ -125,7 +125,7 @@ push_off(void)
 ```
 
 ## `pop_off()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Verlaagt de nestingsdiepte van uitgeschakelde interrupts; schakelt interrupts weer in als de diepte nul bereikt en ze oorspronkelijk aan stonden.
 
 ```c
 

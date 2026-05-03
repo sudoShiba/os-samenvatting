@@ -46,7 +46,7 @@ main()
 ```
 
 ## `halt()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Sluit de emulator af door een specifieke waarde naar het SiFive test-adres te schrijven.
 
 ```c
 
@@ -58,7 +58,7 @@ void halt(void)
 ```
 
 ## `sys_halt()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep-wrapper die de halt-functie aanroept om het systeem te stoppen.
 
 ```c
 

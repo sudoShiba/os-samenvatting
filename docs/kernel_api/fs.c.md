@@ -89,7 +89,7 @@ bfree(int dev, uint b)
 ```
 
 ## `iinit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de inode-tabel en de bijbehorende sleeplocks voor elke inode.
 
 ```c
 
@@ -309,7 +309,7 @@ iunlockput(struct inode *ip)
 ```
 
 ## `ireclaim()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Zoekt naar wees-inodes (inodes zonder links) op de schijf en verwijdert deze om schijfruimte vrij te maken.
 
 ```c
 
@@ -664,7 +664,7 @@ namex(char *path, int nameiparent, char *name)
 ```
 
 ## `namei()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Zet een padnaam om naar de bijbehorende inode door het bestandssysteem te doorlopen.
 
 ```c
 
@@ -678,7 +678,7 @@ namei(char *path)
 ```
 
 ## `nameiparent()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vindt de inode van de ouder-directory van een opgegeven padnaam en retourneert de naam van het laatste element.
 
 ```c
 

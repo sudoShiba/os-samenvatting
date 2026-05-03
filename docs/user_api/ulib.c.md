@@ -18,7 +18,7 @@ start(int argc, char **argv)
 ```
 
 ## `strcpy()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Kopieert een string van bron naar bestemming.
 
 ```c
 
@@ -36,7 +36,7 @@ strcpy(char *s, const char *t)
 ```
 
 ## `strcmp()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vergelijkt twee strings en geeft het verschil terug.
 
 ```c
 
@@ -51,7 +51,7 @@ strcmp(const char *p, const char *q)
 ```
 
 ## `strlen()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Berekent de lengte van een string.
 
 ```c
 
@@ -68,7 +68,7 @@ strlen(const char *s)
 ```
 
 ## `memset()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vult een geheugenblok met een specifieke waarde.
 
 ```c
 
@@ -86,7 +86,7 @@ memset(void *dst, int c, uint n)
 ```
 
 ## `strchr()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Zoekt naar de eerste voorkomst van een karakter in een string.
 
 ```c
 
@@ -102,7 +102,7 @@ strchr(const char *s, char c)
 ```
 
 ## `fgets()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest een regel tekst uit een bestandsbeschrijving.
 
 ```c
 
@@ -127,7 +127,7 @@ fgets(char *buf, int max, int fd)
 ```
 
 ## `gets()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest een regel tekst van de standaardinvoer (fd 0).
 
 ```c
 
@@ -140,7 +140,7 @@ gets(char *buf, int max)
 ```
 
 ## `stat()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Haalt statusinformatie op over een bestand via de bestandsnaam.
 
 ```c
 
@@ -161,7 +161,7 @@ stat(const char *n, struct stat *st)
 ```
 
 ## `atoi()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Zet een string om naar een integer.
 
 ```c
 
@@ -179,7 +179,7 @@ atoi(const char *s)
 ```
 
 ## `memmove()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Kopieert geheugen van de ene naar de andere locatie, waarbij overlappende gebieden correct worden afgehandeld.
 
 ```c
 
@@ -206,7 +206,7 @@ memmove(void *vdst, const void *vsrc, int n)
 ```
 
 ## `memcmp()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vergelijkt twee geheugenblokken byte per byte.
 
 ```c
 
@@ -227,7 +227,7 @@ memcmp(const void *s1, const void *s2, uint n)
 ```
 
 ## `memcpy()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Kopieert een geheugenblok van bron naar bestemming (geïmplementeerd via memmove).
 
 ```c
 

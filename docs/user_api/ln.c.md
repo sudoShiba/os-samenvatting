@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/ln.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma om een harde link te maken tussen twee bestanden via de link-syscall.
 
 ```c
 #include "kernel/types.h"

@@ -511,7 +511,7 @@ vmfault(pagetable_t pagetable, uint64 va, int read)
 ```
 
 ## `ismapped()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert of een virtueel adres is toegewezen in de opgegeven paginatabel.
 
 ```c
 
@@ -531,7 +531,7 @@ ismapped(pagetable_t pagetable, uint64 va)
 ```
 
 ## `print_pagetable()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpsubroutine die recursief de inhoud van een paginatabel en de bijbehorende mappings afdrukt.
 
 ```c
 
@@ -561,7 +561,7 @@ static void print_pagetable(pagetable_t pagetable, uint64 base_va, int level)
 ```
 
 ## `vmprintmappings()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Drukt alle mappings in de paginatabel van een proces af naar de console.
 
 ```c
 

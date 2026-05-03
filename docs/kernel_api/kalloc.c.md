@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/kalloc.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `kinit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de fysieke geheugenbeheerder door de kmem-lock aan te maken en het vrije geheugenbereik toe te voegen aan de freelist.
 
 ```c
 
@@ -17,7 +17,7 @@ kinit()
 ```
 
 ## `freerange()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voegt een reeks fysieke pagina's toe aan de lijst van vrije pagina's.
 
 ```c
 

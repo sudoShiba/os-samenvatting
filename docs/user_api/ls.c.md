@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/ls.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `fmtname()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Formatteert een bestandsnaam door spaties toe te voegen, zodat deze netjes uitgelijnd wordt in de ls-output.
 
 ```c
 #include "kernel/types.h"
@@ -35,7 +35,7 @@ fmtname(char *path)
 ```
 
 ## `ls()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest de inhoud van een directory of haalt stats op van een bestand en drukt deze af.
 
 ```c
 
@@ -91,7 +91,7 @@ ls(char *path)
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de ls-utility; roept de ls-functie aan voor elk opgegeven pad.
 
 ```c
 

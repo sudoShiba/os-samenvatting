@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/umalloc.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `free()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Geeft een eerder gealloceerd geheugenblok vrij en voegt het terug naar de lijst met vrije blokken.
 
 ```c
 
@@ -37,7 +37,7 @@ free(void *ap)
 ```
 
 ## `morecore()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Vraagt extra geheugen aan het besturingssysteem via sbrk wanneer de vrije lijst leeg is.
 
 ```c
 
@@ -61,7 +61,7 @@ morecore(uint nu)
 ```
 
 ## `malloc()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Alloceert een blok geheugen van de gevraagde grootte op de heap.
 
 ```c
 

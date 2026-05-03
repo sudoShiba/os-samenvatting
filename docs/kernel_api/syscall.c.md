@@ -35,7 +35,7 @@ fetchstr(uint64 addr, char *buf, int max)
 ```
 
 ## `argraw()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Haalt het ruwe argument uit de registers van het trapframe van het huidige proces.
 
 ```c
 
@@ -102,7 +102,7 @@ argstr(int n, char *buf, int max)
 ```
 
 ## `syscall()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Centrale afhandeling van systeemaanroepen; haalt het nummer van de aanroep op uit het trapframe en voert de bijbehorende kernel-functie uit.
 
 ```c
 
@@ -123,6 +123,4 @@ syscall(void)
     p->trapframe->a0 = -1;
   }
 }
-
-```
 

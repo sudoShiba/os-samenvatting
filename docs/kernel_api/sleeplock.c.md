@@ -28,7 +28,7 @@ initsleeplock(struct sleeplock *lk, char *name)
 ```
 
 ## `acquiresleep()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Verwerft een sleeplock; als de lock al bezet is, gaat het proces slapen totdat deze vrijkomt.
 
 ```c
 
@@ -47,7 +47,7 @@ acquiresleep(struct sleeplock *lk)
 ```
 
 ## `releasesleep()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Laat een sleeplock los en maakt eventuele wachtende processen wakker.
 
 ```c
 
@@ -64,7 +64,7 @@ releasesleep(struct sleeplock *lk)
 ```
 
 ## `holdingsleep()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert of het huidige proces de sleeplock in bezit heeft.
 
 ```c
 

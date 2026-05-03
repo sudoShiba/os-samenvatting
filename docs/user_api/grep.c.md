@@ -42,15 +42,16 @@ grep(char *pattern, int fd)
 }
 
 ```
-
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de grep-utility; opent bestanden en roept de grep-functie aan voor elk bestand.
 
 ```c
 
 int
 main(int argc, char *argv[])
-{
+...
+}
+
   int fd, i;
   char *pattern;
 

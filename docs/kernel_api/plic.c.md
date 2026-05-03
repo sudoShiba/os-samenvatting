@@ -18,7 +18,7 @@ plicinit(void)
 ```
 
 ## `plicinithart()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de PLIC-instellingen voor de huidige CPU-kern (hart), zoals het inschakelen van interrupts voor specifieke apparaten.
 
 ```c
 

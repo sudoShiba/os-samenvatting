@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/mkdir.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de mkdir-utility; roept de mkdir-systeemaanroep aan voor elk opgegeven argument.
 
 ```c
 #include "kernel/types.h"

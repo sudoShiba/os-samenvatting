@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/virtio_disk.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `virtio_disk_init()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de VirtIO-disk-controller, onderhandelt over functies en zet de nodige queues op.
 
 ```c
 
@@ -183,7 +183,7 @@ alloc3_desc(int *idx)
 ```
 
 ## `virtio_disk_rw()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voert een lees- of schrijfoperatie uit op de VirtIO-disk door commando's in de queue te plaatsen en te wachten op voltooiing.
 
 ```c
 
@@ -269,7 +269,7 @@ virtio_disk_rw(struct buf *b, int write)
 ```
 
 ## `virtio_disk_intr()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Interrupt-handler voor de VirtIO-disk die voltooide operaties verwerkt en wachtende processen wakker maakt.
 
 ```c
 

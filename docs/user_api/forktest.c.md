@@ -22,7 +22,7 @@ print(const char *s)
 ```
 
 ## `forktest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voert een test uit waarbij herhaaldelijk fork wordt aangeroepen totdat de proc-tabel vol is, om te verifiëren of het systeem dit correct afhandelt.
 
 ```c
 
@@ -64,7 +64,7 @@ forktest(void)
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma dat de forktest uitvoert.
 
 ```c
 

@@ -86,7 +86,7 @@ myproc(void)
 ```
 
 ## `allocpid()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Genereert een uniek nieuw proces-ID (PID) op een thread-safe manier.
 
 ```c
 
@@ -669,7 +669,7 @@ kkill(int pid)
 ```
 
 ## `setkilled()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Markeert een specifiek proces als "killed", wat aangeeft dat het moet worden beëindigd.
 
 ```c
 
@@ -684,7 +684,7 @@ setkilled(struct proc *p)
 ```
 
 ## `killed()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert of het opgegeven proces gemarkeerd is om beëindigd te worden.
 
 ```c
 

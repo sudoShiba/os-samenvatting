@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/sysproc.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `sys_exit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om het huidige proces te beëindigen.
 
 ```c
 #include "types.h"
@@ -27,7 +27,7 @@ sys_exit(void)
 ```
 
 ## `sys_getpid()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die het proces-ID (PID) van het huidige proces retourneert.
 
 ```c
 
@@ -40,7 +40,7 @@ sys_getpid(void)
 ```
 
 ## `sys_fork()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een nieuw kindproces te maken.
 
 ```c
 
@@ -53,7 +53,7 @@ sys_fork(void)
 ```
 
 ## `sys_wait()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die wacht tot een kindproces is beëindigd.
 
 ```c
 
@@ -68,7 +68,7 @@ sys_wait(void)
 ```
 
 ## `sys_sbrk()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om de geheugengrootte van het proces aan te passen (vergroten of verkleinen).
 
 ```c
 
@@ -103,7 +103,7 @@ sys_sbrk(void)
 ```
 
 ## `sys_pause()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die het proces een opgegeven aantal kloktikken laat pauzeren.
 
 ```c
 
@@ -132,7 +132,7 @@ sys_pause(void)
 ```
 
 ## `sys_kill()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een ander proces te beëindigen op basis van zijn PID.
 
 ```c
 
@@ -165,7 +165,7 @@ sys_uptime(void)
 ```
 
 ## `sys_vmprintmappings()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die de geheugenmappings van het huidige proces afdrukt voor debugging.
 
 ```c
 

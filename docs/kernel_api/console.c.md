@@ -153,7 +153,7 @@ consoleintr(int c)
 ```
 
 ## `consoleinit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert de console-hardware en koppelt de read- en write-systeemaanroepen aan de console-functies.
 
 ```c
 

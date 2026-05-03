@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/log.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `initlog()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Initialiseert het log-systeem door de log-header in te lezen en eventuele commits te herstellen van de disk.
 
 ```c
 struct log log;
@@ -91,7 +91,7 @@ write_head(void)
 ```
 
 ## `recover_from_log()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Herstelt transacties uit het logboek na een systeemcrash.
 
 ```c
 
@@ -189,7 +189,7 @@ write_log(void)
 ```
 
 ## `commit()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voert een volledige transactie uit door de gebufferde blokken naar het logboek op de disk te schrijven en vervolgens naar hun definitieve locatie.
 
 ```c
 

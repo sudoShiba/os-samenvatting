@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/echo.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de echo-utility; drukt de argumenten af naar de standaarduitvoer, gescheiden door spaties.
 
 ```c
 #include "kernel/types.h"

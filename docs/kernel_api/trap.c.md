@@ -171,7 +171,7 @@ kerneltrap()
 ```
 
 ## `clockintr()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Interrupt-handler voor de timer die de tick-teller ophoogt en de volgende timer-interrupt plant.
 
 ```c
 

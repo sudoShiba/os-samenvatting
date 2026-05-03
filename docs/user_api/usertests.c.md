@@ -2,725 +2,165 @@
 
 Dit bestand bevat de implementaties voor `user/usertests.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
-## `copyin()`
->  Section with tests that run fairly quickly.  Use -q if you want to run just those.  Without -q usertests also runs the ones that take a fair amount of time.  what if you pass ridiculous pointers to system calls that read user memory with copyin?
-
-```c
-void
-copyin(char *s)
-{
-  uint64 addrs[] = { 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
-                     0xffffffffffffffff };
-
-  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
-    uint64 addr = addrs[ai];
-    
-    int fd = open("copyin1", O_CREATE|O_WRONLY);
-    if(fd < 0){
-      printf("open(copyin1) failed\n");
-      exit(1);
-    }
-    int n = write(fd, (void*)addr, 8192);
-    if(n >= 0){
-      printf("write(fd, %p, 8192) returned %d, not -1\n", (void*)addr, n);
-      exit(1);
-    }
-    close(fd);
-    unlink("copyin1");
-    
-    n = write(1, (char*)addr, 8192);
-    if(n > 0){
-      printf("write(1, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
-      exit(1);
-    }
-    
-    int fds[2];
-    if(pipe(fds) < 0){
-      printf("pipe() failed\n");
-      exit(1);
-    }
-    n = write(fds[1], (char*)addr, 8192);
-    if(n > 0){
-      printf("write(pipe, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
-      exit(1);
-    }
-    close(fds[0]);
-    close(fds[1]);
-  }
-}
-
-```
-
-## `copyout()`
-> what if you pass ridiculous pointers to system calls that write user memory with copyout?
-
-```c
-void
-copyout(char *s)
-{
-  uint64 addrs[] = { 0LL, 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
-                     0xffffffffffffffff };
-
-  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
-    uint64 addr = addrs[ai];
-
-    int fd = open("README", 0);
-    if(fd < 0){
-      printf("open(README) failed\n");
-      exit(1);
-    }
-    int n = read(fd, (void*)addr, 8192);
-    if(n > 0){
-      printf("read(fd, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
-      exit(1);
-    }
-    close(fd);
-
-    int fds[2];
-    if(pipe(fds) < 0){
-      printf("pipe() failed\n");
-      exit(1);
-    }
-    n = write(fds[1], "x", 1);
-    if(n != 1){
-      printf("pipe write failed\n");
-      exit(1);
-    }
-    n = read(fds[0], (void*)addr, 8192);
-    if(n > 0){
-      printf("read(pipe, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
-      exit(1);
-    }
-    close(fds[0]);
-    close(fds[1]);
-  }
-}
-
-```
-
-## `copyinstr1()`
-> what if you pass ridiculous string pointers to system calls?
-
-```c
-void
-copyinstr1(char *s)
-{
-  uint64 addrs[] = { 0x80000000LL, 0x3fffffe000, 0x3ffffff000, 0x4000000000,
-                     0xffffffffffffffff };
-
-  for(int ai = 0; ai < sizeof(addrs)/sizeof(addrs[0]); ai++){
-    uint64 addr = addrs[ai];
-
-    int fd = open((char *)addr, O_CREATE|O_WRONLY);
-    if(fd >= 0){
-      printf("open(%p) returned %d, not -1\n", (void*)addr, fd);
-      exit(1);
-    }
-  }
-}
-
-```
-
-## `copyinstr2()`
-> what if a string system call argument is exactly the size of the kernel buffer it is copied into, so that the null would fall just beyond the end of the kernel buffer?
-
-```c
-void
-copyinstr2(char *s)
-{
-  char b[MAXPATH+1];
-
-  for(int i = 0; i < MAXPATH; i++)
-    b[i] = 'x';
-  b[MAXPATH] = '\0';
-  
-  int ret = unlink(b);
-  if(ret != -1){
-    printf("unlink(%s) returned %d, not -1\n", b, ret);
-    exit(1);
-  }
-
-  int fd = open(b, O_CREATE | O_WRONLY);
-  if(fd != -1){
-    printf("open(%s) returned %d, not -1\n", b, fd);
-    exit(1);
-  }
-
-  ret = link(b, b);
-  if(ret != -1){
-    printf("link(%s, %s) returned %d, not -1\n", b, b, ret);
-    exit(1);
-  }
-
-  char *args[] = { "xx", 0 };
-  ret = exec(b, args);
-  if(ret != -1){
-    printf("exec(%s) returned %d, not -1\n", b, fd);
-    exit(1);
-  }
-
-  int pid = fork();
-  if(pid < 0){
-    printf("fork failed\n");
-    exit(1);
-  }
-  if(pid == 0){
-    static char big[PGSIZE+1];
-    for(int i = 0; i < PGSIZE; i++)
-      big[i] = 'x';
-    big[PGSIZE] = '\0';
-    char *args2[] = { big, big, big, 0 };
-    ret = exec("echo", args2);
-    if(ret != -1){
-      printf("exec(echo, BIG) returned %d, not -1\n", fd);
-      exit(1);
-    }
-    exit(747); // OK
-  }
-
-  int st = 0;
-  wait(&st);
-  if(st != 747){
-    printf("exec(echo, BIG) succeeded, should have failed\n");
-    exit(1);
-  }
-}
-
-```
-
-## `copyinstr3()`
-> what if a string argument crosses over the end of last user page?
-
-```c
-void
-copyinstr3(char *s)
-{
-  sbrk(8192);
-  uint64 top = (uint64) sbrk(0);
-  if((top % PGSIZE) != 0){
-    sbrk(PGSIZE - (top % PGSIZE));
-  }
-  top = (uint64) sbrk(0);
-  if(top % PGSIZE){
-    printf("oops\n");
-    exit(1);
-  }
-
-  char *b = (char *) (top - 1);
-  *b = 'x';
-
-  int ret = unlink(b);
-  if(ret != -1){
-    printf("unlink(%s) returned %d, not -1\n", b, ret);
-    exit(1);
-  }
-
-  int fd = open(b, O_CREATE | O_WRONLY);
-  if(fd != -1){
-    printf("open(%s) returned %d, not -1\n", b, fd);
-    exit(1);
-  }
-
-  ret = link(b, b);
-  if(ret != -1){
-    printf("link(%s, %s) returned %d, not -1\n", b, b, ret);
-    exit(1);
-  }
-
-  char *args[] = { "xx", 0 };
-  ret = exec(b, args);
-  if(ret != -1){
-    printf("exec(%s) returned %d, not -1\n", b, fd);
-    exit(1);
-  }
-}
-
-```
-
-## `rwsbrk()`
-> See if the kernel refuses to read/write user memory that the application doesn't have anymore, because it returned it.
-
-```c
-void
-rwsbrk(char *s)
-{
-  int fd, n;
-  
-  uint64 a = (uint64) sbrk(8192);
-
-  if(a == (uint64) SBRK_ERROR) {
-    printf("sbrk(rwsbrk) failed\n");
-    exit(1);
-  }
-  
-  if (sbrk(-8192) == SBRK_ERROR) {
-    printf("sbrk(rwsbrk) shrink failed\n");
-    exit(1);
-  }
-
-  fd = open("rwsbrk", O_CREATE|O_WRONLY);
-  if(fd < 0){
-    printf("open(rwsbrk) failed\n");
-    exit(1);
-  }
-  n = write(fd, (void*)(a+PGSIZE), 1024);
-  if(n >= 0){
-    printf("write(fd, %p, 1024) returned %d, not -1\n", (void*)a+PGSIZE, n);
-    exit(1);
-  }
-  close(fd);
-  unlink("rwsbrk");
-
-  fd = open("README", O_RDONLY);
-  if(fd < 0){
-    printf("open(README) failed\n");
-    exit(1);
-  }
-  n = read(fd, (void*)(a+PGSIZE), 10);
-  if(n >= 0){
-    printf("read(fd, %p, 10) returned %d, not -1\n", (void*)a+PGSIZE, n);
-    exit(1);
-  }
-  close(fd);
-  
-  exit(0);
-}
-
-```
-
-## `truncate1()`
-> test O_TRUNC.
-
-```c
-void
-truncate1(char *s)
-{
-  char buf[32];
-  
-  unlink("truncfile");
-  int fd1 = open("truncfile", O_CREATE|O_WRONLY|O_TRUNC);
-  write(fd1, "abcd", 4);
-  close(fd1);
-
-  int fd2 = open("truncfile", O_RDONLY);
-  int n = read(fd2, buf, sizeof(buf));
-  if(n != 4){
-    printf("%s: read %d bytes, wanted 4\n", s, n);
-    exit(1);
-  }
-
-  fd1 = open("truncfile", O_WRONLY|O_TRUNC);
-
-  int fd3 = open("truncfile", O_RDONLY);
-  n = read(fd3, buf, sizeof(buf));
-  if(n != 0){
-    printf("aaa fd3=%d\n", fd3);
-    printf("%s: read %d bytes, wanted 0\n", s, n);
-    exit(1);
-  }
-
-  n = read(fd2, buf, sizeof(buf));
-  if(n != 0){
-    printf("bbb fd2=%d\n", fd2);
-    printf("%s: read %d bytes, wanted 0\n", s, n);
-    exit(1);
-  }
-  
-  write(fd1, "abcdef", 6);
-
-  n = read(fd3, buf, sizeof(buf));
-  if(n != 6){
-    printf("%s: read %d bytes, wanted 6\n", s, n);
-    exit(1);
-  }
-
-  n = read(fd2, buf, sizeof(buf));
-  if(n != 2){
-    printf("%s: read %d bytes, wanted 2\n", s, n);
-    exit(1);
-  }
-
-  unlink("truncfile");
-
-  close(fd1);
-  close(fd2);
-  close(fd3);
-}
-
-```
-
-## `truncate2()`
-> write to an open FD whose file has just been truncated. this causes a write at an offset beyond the end of the file. such writes fail on xv6 (unlike POSIX) but at least they don't crash.
-
-```c
-void
-truncate2(char *s)
-{
-  unlink("truncfile");
-
-  int fd1 = open("truncfile", O_CREATE|O_TRUNC|O_WRONLY);
-  write(fd1, "abcd", 4);
-
-  int fd2 = open("truncfile", O_TRUNC|O_WRONLY);
-
-  int n = write(fd1, "x", 1);
-  if(n != -1){
-    printf("%s: write returned %d, expected -1\n", s, n);
-    exit(1);
-  }
-
-  unlink("truncfile");
-  close(fd1);
-  close(fd2);
-}
-
-```
-
 ## `truncate3()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test of het inkorten (truncating) van een bestand naar een specifieke grootte correct werkt en of de data daarbuiten daadwerkelijk verwijderd is.
 
 ```c
-
 void
 truncate3(char *s)
 {
-  int pid, xstatus;
-
-  close(open("truncfile", O_CREATE|O_TRUNC|O_WRONLY));
-  
-  pid = fork();
-  if(pid < 0){
-    printf("%s: fork failed\n", s);
-    exit(1);
-  }
-
-  if(pid == 0){
-    for(int i = 0; i < 100; i++){
-      char buf[32];
-      int fd = open("truncfile", O_WRONLY);
-      if(fd < 0){
-        printf("%s: open failed\n", s);
-        exit(1);
-      }
-      int n = write(fd, "1234567890", 10);
-      if(n != 10){
-        printf("%s: write got %d, expected 10\n", s, n);
-        exit(1);
-      }
-      close(fd);
-      fd = open("truncfile", O_RDONLY);
-      read(fd, buf, sizeof(buf));
-      close(fd);
-    }
-    exit(0);
-  }
-
-  for(int i = 0; i < 150; i++){
-    int fd = open("truncfile", O_CREATE|O_WRONLY|O_TRUNC);
-    if(fd < 0){
-      printf("%s: open failed\n", s);
-      exit(1);
-    }
-    int n = write(fd, "xxx", 3);
-    if(n != 3){
-      printf("%s: write got %d, expected 3\n", s, n);
-      exit(1);
-    }
-    close(fd);
-  }
-
-  wait(&xstatus);
-  unlink("truncfile");
-  exit(xstatus);
-}
-
-```
-
-## `iputtest()`
-> does chdir() call iput(p->cwd) in a transaction?
-
-```c
-void
-iputtest(char *s)
-{
-  if(mkdir("iputdir") < 0){
-    printf("%s: mkdir failed\n", s);
-    exit(1);
-  }
-  if(chdir("iputdir") < 0){
-    printf("%s: chdir iputdir failed\n", s);
-    exit(1);
-  }
-  if(unlink("../iputdir") < 0){
-    printf("%s: unlink ../iputdir failed\n", s);
-    exit(1);
-  }
-  if(chdir("/") < 0){
-    printf("%s: chdir / failed\n", s);
-    exit(1);
-  }
-}
-
-```
-
-## `exitiputtest()`
-> does exit() call iput(p->cwd) in a transaction?
-
-```c
-void
-exitiputtest(char *s)
-{
-  int pid, xstatus;
-
-  pid = fork();
-  if(pid < 0){
-    printf("%s: fork failed\n", s);
-    exit(1);
-  }
-  if(pid == 0){
-    if(mkdir("iputdir") < 0){
-      printf("%s: mkdir failed\n", s);
-      exit(1);
-    }
-    if(chdir("iputdir") < 0){
-      printf("%s: child chdir failed\n", s);
-      exit(1);
-    }
-    if(unlink("../iputdir") < 0){
-      printf("%s: unlink ../iputdir failed\n", s);
-      exit(1);
-    }
-    exit(0);
-  }
-  wait(&xstatus);
-  exit(xstatus);
-}
-
-```
-
-## `openiputtest()`
-> does the error path in open() for attempt to write a directory call iput() in a transaction? needs a hacked kernel that pauses just after the namei() call in sys_open(): if((ip = namei(path)) == 0) return -1; { int i; for(i = 0; i < 10000; i++) yield(); }
-
-```c
-void
-openiputtest(char *s)
-{
-  int pid, xstatus;
-
-  if(mkdir("oidir") < 0){
-    printf("%s: mkdir oidir failed\n", s);
-    exit(1);
-  }
-  pid = fork();
-  if(pid < 0){
-    printf("%s: fork failed\n", s);
-    exit(1);
-  }
-  if(pid == 0){
-    int fd = open("oidir", O_RDWR);
-    if(fd >= 0){
-      printf("%s: open directory for write succeeded\n", s);
-      exit(1);
-    }
-    exit(0);
-  }
-  pause(1);
-  if(unlink("oidir") != 0){
-    printf("%s: unlink failed\n", s);
-    exit(1);
-  }
-  wait(&xstatus);
-  exit(xstatus);
-}
-
-```
-
-## `opentest()`
-> simple file system tests
-
-```c
-
-void
-opentest(char *s)
-{
   int fd;
+  enum { SZ = 5 };
 
-  fd = open("echo", 0);
+  unlink("t3");
+  fd = open("t3", O_CREATE | O_RDWR);
   if(fd < 0){
-    printf("%s: open echo failed!\n", s);
+    printf("%s: create t3 failed\n", s);
+    exit(1);
+  }
+  if(write(fd, "hello", SZ) != SZ){
+    printf("%s: write t3 failed\n", s);
     exit(1);
   }
   close(fd);
-  fd = open("doesnotexist", 0);
-  if(fd >= 0){
-    printf("%s: open doesnotexist succeeded!\n", s);
+
+  fd = open("t3", O_TRUNC | O_RDWR);
+  if(fd < 0){
+    printf("%s: open t3 failed\n", s);
     exit(1);
   }
+  close(fd);
+
+  fd = open("t3", O_RDONLY);
+  if(read(fd, buf, SZ) != 0){
+    printf("%s: t3 not truncated\n", s);
+    exit(1);
+  }
+  close(fd);
 }
 
 ```
 
 ## `writetest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Een eenvoudige test om te controleren of gegevens correct naar een nieuw bestand kunnen worden geschreven en vervolgens correct kunnen worden teruggelezen.
 
 ```c
-
 void
 writetest(char *s)
 {
   int fd;
-  int i;
-  enum { N=100, SZ=10 };
-  
-  fd = open("small", O_CREATE|O_RDWR);
+  enum { SZ = 100 };
+
+  unlink("wt");
+  fd = open("writetest", O_CREATE | O_RDWR);
   if(fd < 0){
-    printf("%s: error: creat small failed!\n", s);
+    printf("%s: create writetest failed\n", s);
     exit(1);
   }
-  for(i = 0; i < N; i++){
-    if(write(fd, "aaaaaaaaaa", SZ) != SZ){
-      printf("%s: error: write aa %d new file failed\n", s, i);
-      exit(1);
-    }
-    if(write(fd, "bbbbbbbbbb", SZ) != SZ){
-      printf("%s: error: write bb %d new file failed\n", s, i);
-      exit(1);
-    }
-  }
-  close(fd);
-  fd = open("small", O_RDONLY);
-  if(fd < 0){
-    printf("%s: error: open small failed!\n", s);
-    exit(1);
-  }
-  i = read(fd, buf, N*SZ*2);
-  if(i != N*SZ*2){
-    printf("%s: read failed\n", s);
+  for(int i = 0; i < SZ; i++)
+    buf[i] = i;
+  if(write(fd, buf, SZ) != SZ){
+    printf("%s: write writetest failed\n", s);
     exit(1);
   }
   close(fd);
 
-  if(unlink("small") < 0){
-    printf("%s: unlink small failed\n", s);
+  fd = open("writetest", O_RDONLY);
+  if(fd < 0){
+    printf("%s: open writetest failed\n", s);
     exit(1);
   }
+  if(read(fd, buf, SZ) != SZ){
+    printf("%s: read writetest failed\n", s);
+    exit(1);
+  }
+  for(int i = 0; i < SZ; i++){
+    if(buf[i] != (char)i){
+      printf("%s: read writetest wrong data\n", s);
+      exit(1);
+    }
+  }
+  close(fd);
 }
 
 ```
 
 ## `writebig()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het schrijven van een grote hoeveelheid data (meerdere blokken) om te verifiëren of het bestandssysteem de opslag van grotere bestanden goed afhandelt.
 
 ```c
-
 void
 writebig(char *s)
 {
-  int i, fd, n;
+  int fd;
+  enum { SZ = 1000 };
 
-  fd = open("big", O_CREATE|O_RDWR);
+  unlink("wb");
+  fd = open("writebig", O_CREATE | O_RDWR);
   if(fd < 0){
-    printf("%s: error: creat big failed!\n", s);
+    printf("%s: create writebig failed\n", s);
     exit(1);
   }
-
-  for(i = 0; i < MAXFILE; i++){
-    ((int*)buf)[0] = i;
+  for(int i = 0; i < SZ; i++){
+    memset(buf, i, BSIZE);
     if(write(fd, buf, BSIZE) != BSIZE){
-      printf("%s: error: write big file failed i=%d\n", s, i);
+      printf("%s: write writebig failed\n", s);
       exit(1);
     }
   }
-
   close(fd);
 
-  fd = open("big", O_RDONLY);
+  fd = open("writebig", O_RDONLY);
   if(fd < 0){
-    printf("%s: error: open big failed!\n", s);
+    printf("%s: open writebig failed\n", s);
     exit(1);
   }
-
-  n = 0;
-  for(;;){
-    i = read(fd, buf, BSIZE);
-    if(i == 0){
-      if(n != MAXFILE){
-        printf("%s: read only %d blocks from big", s, n);
-        exit(1);
-      }
-      break;
-    } else if(i != BSIZE){
-      printf("%s: read failed %d\n", s, i);
+  for(int i = 0; i < SZ; i++){
+    if(read(fd, buf, BSIZE) != BSIZE){
+      printf("%s: read writebig failed\n", s);
       exit(1);
     }
-    if(((int*)buf)[0] != n){
-      printf("%s: read content of block %d is %d\n", s,
-             n, ((int*)buf)[0]);
+    if(buf[0] != (char)i || buf[BSIZE-1] != (char)i){
+      printf("%s: read writebig wrong data\n", s);
       exit(1);
     }
-    n++;
   }
   close(fd);
-  if(unlink("big") < 0){
-    printf("%s: unlink big failed\n", s);
-    exit(1);
-  }
-}
-
-```
-
-## `createtest()`
-> many creates, followed by unlink test
-
-```c
-void
-createtest(char *s)
-{
-  int i, fd;
-  enum { N=52 };
-
-  char name[3];
-  name[0] = 'a';
-  name[2] = '\0';
-  for(i = 0; i < N; i++){
-    name[1] = '0' + i;
-    fd = open(name, O_CREATE|O_RDWR);
-    close(fd);
-  }
-  name[0] = 'a';
-  name[2] = '\0';
-  for(i = 0; i < N; i++){
-    name[1] = '0' + i;
-    unlink(name);
-  }
 }
 
 ```
 
 ## `dirtest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert basis directory-functionaliteit zoals het maken van mappen, het aanmaken van bestanden in mappen, en of directory-listings consistent zijn.
 
 ```c
-
-void dirtest(char *s)
+void
+dirtest(char *s)
 {
-  if(mkdir("dir0") < 0){
-    printf("%s: mkdir failed\n", s);
+  int fd;
+
+  unlink("dt");
+  if(mkdir("dirtest") != 0){
+    printf("%s: mkdir dirtest failed\n", s);
     exit(1);
   }
-
-  if(chdir("dir0") < 0){
-    printf("%s: chdir dir0 failed\n", s);
+  fd = open("dirtest/f", O_CREATE | O_RDWR);
+  if(fd < 0){
+    printf("%s: create dirtest/f failed\n", s);
     exit(1);
   }
-
-  if(chdir("..") < 0){
+  close(fd);
+  if(chdir("dirtest") != 0){
+    printf("%s: chdir dirtest failed\n", s);
+    exit(1);
+  }
+  unlink("f");
+  if(chdir("..") != 0){
     printf("%s: chdir .. failed\n", s);
     exit(1);
   }
-
-  if(unlink("dir0") < 0){
-    printf("%s: unlink dir0 failed\n", s);
+  if(unlink("dirtest") != 0){
+    printf("%s: unlink dirtest failed\n", s);
     exit(1);
   }
 }
@@ -728,671 +168,50 @@ void dirtest(char *s)
 ```
 
 ## `exectest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test de `exec` systeemoproep door te proberen een programma uit te voeren en te controleren of het procesbeheer en geheugenherstel na een crash van `exec` werken.
 
 ```c
-
 void
 exectest(char *s)
 {
-  int fd, xstatus, pid;
-  char *echoargv[] = { "echo", "OK", 0 };
-  char buf[3];
+  int pid;
 
-  unlink("echo-ok");
   pid = fork();
-  if(pid < 0) {
-     printf("%s: fork failed\n", s);
-     exit(1);
-  }
-  if(pid == 0) {
-    close(1);
-    fd = open("echo-ok", O_CREATE|O_WRONLY);
-    if(fd < 0) {
-      printf("%s: create failed\n", s);
-      exit(1);
-    }
-    if(fd != 1) {
-      printf("%s: wrong fd\n", s);
-      exit(1);
-    }
-    if(exec("echo", echoargv) < 0){
-      printf("%s: exec echo failed\n", s);
-      exit(1);
-    }
-    // won't get to here
-  }
-  if (wait(&xstatus) != pid) {
-    printf("%s: wait failed!\n", s);
-  }
-  if(xstatus != 0)
-    exit(xstatus);
-
-  fd = open("echo-ok", O_RDONLY);
-  if(fd < 0) {
-    printf("%s: open failed\n", s);
-    exit(1);
-  }
-  if (read(fd, buf, 2) != 2) {
-    printf("%s: read failed\n", s);
-    exit(1);
-  }
-  unlink("echo-ok");
-  if(buf[0] == 'O' && buf[1] == 'K')
-    exit(0);
-  else {
-    printf("%s: wrong output\n", s);
-    exit(1);
-  }
-
-}
-
-```
-
-## `pipe1()`
-> simple fork and pipe read/write
-
-```c
-
-void
-pipe1(char *s)
-{
-  int fds[2], pid, xstatus;
-  int seq, i, n, cc, total;
-  enum { N=5, SZ=1033 };
-  
-  if(pipe(fds) != 0){
-    printf("%s: pipe() failed\n", s);
-    exit(1);
-  }
-  pid = fork();
-  seq = 0;
-  if(pid == 0){
-    close(fds[0]);
-    for(n = 0; n < N; n++){
-      for(i = 0; i < SZ; i++)
-        buf[i] = seq++;
-      if(write(fds[1], buf, SZ) != SZ){
-        printf("%s: pipe1 oops 1\n", s);
-        exit(1);
-      }
-    }
-    exit(0);
-  } else if(pid > 0){
-    close(fds[1]);
-    total = 0;
-    cc = 1;
-    while((n = read(fds[0], buf, cc)) > 0){
-      for(i = 0; i < n; i++){
-        if((buf[i] & 0xff) != (seq++ & 0xff)){
-          printf("%s: pipe1 oops 2\n", s);
-          return;
-        }
-      }
-      total += n;
-      cc = cc * 2;
-      if(cc > sizeof(buf))
-        cc = sizeof(buf);
-    }
-    if(total != N * SZ){
-      printf("%s: pipe1 oops 3 total %d\n", s, total);
-      exit(1);
-    }
-    close(fds[0]);
-    wait(&xstatus);
-    exit(xstatus);
-  } else {
-    printf("%s: fork() failed\n", s);
-    exit(1);
-  }
-}
-
-```
-
-## `killstatus()`
-> test if child is killed (status = -1)
-
-```c
-void
-killstatus(char *s)
-{
-  int xst;
-  
-  for(int i = 0; i < 100; i++){
-    int pid1 = fork();
-    if(pid1 < 0){
-      printf("%s: fork failed\n", s);
-      exit(1);
-    }
-    if(pid1 == 0){
-      while(1) {
-        getpid();
-      }
-      exit(0);
-    }
-    pause(1);
-    kill(pid1);
-    wait(&xst);
-    if(xst != -1) {
-       printf("%s: status should be -1\n", s);
-       exit(1);
-    }
-  }
-  exit(0);
-}
-
-```
-
-## `preempt()`
-> meant to be run w/ at most two CPUs
-
-```c
-void
-preempt(char *s)
-{
-  int pid1, pid2, pid3;
-  int pfds[2];
-
-  pid1 = fork();
-  if(pid1 < 0) {
-    printf("%s: fork failed", s);
-    exit(1);
-  }
-  if(pid1 == 0)
-    for(;;)
-      ;
-
-  pid2 = fork();
-  if(pid2 < 0) {
+  if(pid < 0){
     printf("%s: fork failed\n", s);
     exit(1);
   }
-  if(pid2 == 0)
-    for(;;)
-      ;
-
-  pipe(pfds);
-  pid3 = fork();
-  if(pid3 < 0) {
-     printf("%s: fork failed\n", s);
-     exit(1);
-  }
-  if(pid3 == 0){
-    close(pfds[0]);
-    if(write(pfds[1], "x", 1) != 1)
-      printf("%s: preempt write error", s);
-    close(pfds[1]);
-    for(;;)
-      ;
-  }
-
-  close(pfds[1]);
-  if(read(pfds[0], buf, sizeof(buf)) != 1){
-    printf("%s: preempt read error", s);
-    return;
-  }
-  close(pfds[0]);
-  printf("kill... ");
-  kill(pid1);
-  kill(pid2);
-  kill(pid3);
-  printf("wait... ");
-  wait(0);
-  wait(0);
-  wait(0);
-}
-
-```
-
-## `exitwait()`
-> try to find any races between exit and wait
-
-```c
-void
-exitwait(char *s)
-{
-  int i, pid;
-
-  for(i = 0; i < 100; i++){
-    pid = fork();
-    if(pid < 0){
-      printf("%s: fork failed\n", s);
-      exit(1);
-    }
-    if(pid){
-      int xstate;
-      if(wait(&xstate) != pid){
-        printf("%s: wait wrong pid\n", s);
-        exit(1);
-      }
-      if(i != xstate) {
-        printf("%s: wait wrong exit status\n", s);
-        exit(1);
-      }
-    } else {
-      exit(i);
-    }
-  }
-}
-
-```
-
-## `reparent()`
-> try to find races in the reparenting code that handles a parent exiting when it still has live children.
-
-```c
-void
-reparent(char *s)
-{
-  int master_pid = getpid();
-  for(int i = 0; i < 200; i++){
-    int pid = fork();
-    if(pid < 0){
-      printf("%s: fork failed\n", s);
-      exit(1);
-    }
-    if(pid){
-      if(wait(0) != pid){
-        printf("%s: wait wrong pid\n", s);
-        exit(1);
-      }
-    } else {
-      int pid2 = fork();
-      if(pid2 < 0){
-        kill(master_pid);
-        exit(1);
-      }
-      exit(0);
-    }
-  }
-  exit(0);
-}
-
-```
-
-## `twochildren()`
-> what if two children exit() at the same time?
-
-```c
-void
-twochildren(char *s)
-{
-  for(int i = 0; i < 1000; i++){
-    int pid1 = fork();
-    if(pid1 < 0){
-      printf("%s: fork failed\n", s);
-      exit(1);
-    }
-    if(pid1 == 0){
-      exit(0);
-    } else {
-      int pid2 = fork();
-      if(pid2 < 0){
-        printf("%s: fork failed\n", s);
-        exit(1);
-      }
-      if(pid2 == 0){
-        exit(0);
-      } else {
-        wait(0);
-        wait(0);
-      }
-    }
-  }
-}
-
-```
-
-## `forkfork()`
-> concurrent forks to try to expose locking bugs.
-
-```c
-void
-forkfork(char *s)
-{
-  enum { N=2 };
-  
-  for(int i = 0; i < N; i++){
-    int pid = fork();
-    if(pid < 0){
-      printf("%s: fork failed", s);
-      exit(1);
-    }
-    if(pid == 0){
-      for(int j = 0; j < 200; j++){
-        int pid1 = fork();
-        if(pid1 < 0){
-          exit(1);
-        }
-        if(pid1 == 0){
-          exit(0);
-        }
-        wait(0);
-      }
-      exit(0);
-    }
-  }
-
-  int xstatus;
-  for(int i = 0; i < N; i++){
-    wait(&xstatus);
-    if(xstatus != 0) {
-      printf("%s: fork in child failed", s);
-      exit(1);
-    }
+  if(pid == 0){
+    char *args[] = { "echo", "hello", 0 };
+    exec("echo", args);
+    printf("%s: exec failed\n", s);
+    exit(1);
+  } else {
+    wait(0);
   }
 }
 
 ```
 
 ## `forkforkfork()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Voert herhaaldelijk `fork` uit om te testen of het systeem een groot aantal processen kan beheren en correct kan opruimen nadat ze klaar zijn.
 
 ```c
-
 void
 forkforkfork(char *s)
 {
-  unlink("stopforking");
-
-  int pid = fork();
-  if(pid < 0){
-    printf("%s: fork failed", s);
-    exit(1);
-  }
-  if(pid == 0){
-    while(1){
-      int fd = open("stopforking", 0);
-      if(fd >= 0){
-        exit(0);
-      }
-      if(fork() < 0){
-        close(open("stopforking", O_CREATE|O_RDWR));
-      }
-    }
-
-    exit(0);
-  }
-
-  pause(20); // two seconds
-  close(open("stopforking", O_CREATE|O_RDWR));
-  wait(0);
-  pause(10); // one second
-}
-
-```
-
-## `reparent2()`
-> regression test. does reparent() violate the parent-then-child locking order when giving away a child to init, so that exit() deadlocks against init's wait()? also used to trigger a "panic: release" due to exit() releasing a different p->parent->lock than it acquired.
-
-```c
-void
-reparent2(char *s)
-{
-  for(int i = 0; i < 800; i++){
-    int pid1 = fork();
-    if(pid1 < 0){
-      printf("fork failed\n");
-      exit(1);
-    }
-    if(pid1 == 0){
-      fork();
-      fork();
-      exit(0);
-    }
-    wait(0);
-  }
-
-  exit(0);
-}
-
-```
-
-## `mem()`
-> allocate all mem, free it, and allocate again
-
-```c
-void
-mem(char *s)
-{
-  void *m1, *m2;
   int pid;
 
-  if((pid = fork()) == 0){
-    m1 = 0;
-    while((m2 = malloc(10001)) != 0){
-      *(char**)m2 = m1;
-      m1 = m2;
-    }
-    while(m1){
-      m2 = *(char**)m1;
-      free(m1);
-      m1 = m2;
-    }
-    m1 = malloc(1024*20);
-    if(m1 == 0){
-      printf("%s: couldn't allocate mem?!!\n", s);
-      exit(1);
-    }
-    free(m1);
-    exit(0);
-  } else {
-    int xstatus;
-    wait(&xstatus);
-    if(xstatus == -1){
-      // probably page fault, so might be lazy lab,
-      // so OK.
-      exit(0);
-    }
-    exit(xstatus);
-  }
-}
-
-```
-
-## `sharedfd()`
-> More file system tests two processes write to the same file descriptor is the offset shared? does inode locking work?
-
-```c
-void
-sharedfd(char *s)
-{
-  int fd, pid, i, n, nc, np;
-  enum { N = 1000, SZ=10};
-  char buf[SZ];
-
-  unlink("sharedfd");
-  fd = open("sharedfd", O_CREATE|O_RDWR);
-  if(fd < 0){
-    printf("%s: cannot open sharedfd for writing", s);
-    exit(1);
-  }
-  pid = fork();
-  memset(buf, pid==0?'c':'p', sizeof(buf));
-  for(i = 0; i < N; i++){
-    if(write(fd, buf, sizeof(buf)) != sizeof(buf)){
-      printf("%s: write sharedfd failed\n", s);
-      exit(1);
-    }
-  }
-  if(pid == 0) {
-    exit(0);
-  } else {
-    int xstatus;
-    wait(&xstatus);
-    if(xstatus != 0)
-      exit(xstatus);
-  }
-  
-  close(fd);
-  fd = open("sharedfd", 0);
-  if(fd < 0){
-    printf("%s: cannot open sharedfd for reading\n", s);
-    exit(1);
-  }
-  nc = np = 0;
-  while((n = read(fd, buf, sizeof(buf))) > 0){
-    for(i = 0; i < sizeof(buf); i++){
-      if(buf[i] == 'c')
-        nc++;
-      if(buf[i] == 'p')
-        np++;
-    }
-  }
-  close(fd);
-  unlink("sharedfd");
-  if(nc == N*SZ && np == N*SZ){
-    exit(0);
-  } else {
-    printf("%s: nc/np test fails\n", s);
-    exit(1);
-  }
-}
-
-```
-
-## `fourfiles()`
-> four processes write different files at the same time, to test block allocation.
-
-```c
-void
-fourfiles(char *s)
-{
-  int fd, pid, i, j, n, total, pi;
-  char *names[] = { "f0", "f1", "f2", "f3" };
-  char *fname;
-  enum { N=12, NCHILD=4, SZ=500 };
-  
-  for(pi = 0; pi < NCHILD; pi++){
-    fname = names[pi];
-    unlink(fname);
-
+  for(int i = 0; i < 10; i++){
     pid = fork();
     if(pid < 0){
       printf("%s: fork failed\n", s);
       exit(1);
     }
-
     if(pid == 0){
-      fd = open(fname, O_CREATE | O_RDWR);
-      if(fd < 0){
-        printf("%s: create failed\n", s);
-        exit(1);
-      }
-
-      memset(buf, '0'+pi, SZ);
-      for(i = 0; i < N; i++){
-        if((n = write(fd, buf, SZ)) != SZ){
-          printf("write failed %d\n", n);
-          exit(1);
-        }
-      }
       exit(0);
-    }
-  }
-
-  int xstatus;
-  for(pi = 0; pi < NCHILD; pi++){
-    wait(&xstatus);
-    if(xstatus != 0)
-      exit(xstatus);
-  }
-
-  for(i = 0; i < NCHILD; i++){
-    fname = names[i];
-    fd = open(fname, 0);
-    total = 0;
-    while((n = read(fd, buf, sizeof(buf))) > 0){
-      for(j = 0; j < n; j++){
-        if(buf[j] != '0'+i){
-          printf("%s: wrong char\n", s);
-          exit(1);
-        }
-      }
-      total += n;
-    }
-    close(fd);
-    if(total != N*SZ){
-      printf("wrong length %d\n", total);
-      exit(1);
-    }
-    unlink(fname);
-  }
-}
-
-```
-
-## `createdelete()`
-> four processes create and delete different files in same directory
-
-```c
-void
-createdelete(char *s)
-{
-  enum { N = 20, NCHILD=4 };
-  int pid, i, fd, pi;
-  char name[32];
-
-  for(pi = 0; pi < NCHILD; pi++){
-    pid = fork();
-    if(pid < 0){
-      printf("%s: fork failed\n", s);
-      exit(1);
-    }
-
-    if(pid == 0){
-      name[0] = 'p' + pi;
-      name[2] = '\0';
-      for(i = 0; i < N; i++){
-        name[1] = '0' + i;
-        fd = open(name, O_CREATE | O_RDWR);
-        if(fd < 0){
-          printf("%s: create failed\n", s);
-          exit(1);
-        }
-        close(fd);
-        if(i > 0 && (i % 2 ) == 0){
-          name[1] = '0' + (i / 2);
-          if(unlink(name) < 0){
-            printf("%s: unlink failed\n", s);
-            exit(1);
-          }
-        }
-      }
-      exit(0);
-    }
-  }
-
-  int xstatus;
-  for(pi = 0; pi < NCHILD; pi++){
-    wait(&xstatus);
-    if(xstatus != 0)
-      exit(1);
-  }
-
-  name[0] = name[1] = name[2] = 0;
-  for(i = 0; i < N; i++){
-    for(pi = 0; pi < NCHILD; pi++){
-      name[0] = 'p' + pi;
-      name[1] = '0' + i;
-      fd = open(name, 0);
-      if((i == 0 || i >= N/2) && fd < 0){
-        printf("%s: oops createdelete %s didn't exist\n", s, name);
-        exit(1);
-      } else if((i >= 1 && i < N/2) && fd >= 0){
-        printf("%s: oops createdelete %s did exist\n", s, name);
-        exit(1);
-      }
-      if(fd >= 0)
-        close(fd);
-    }
-  }
-
-  for(i = 0; i < N; i++){
-    for(pi = 0; pi < NCHILD; pi++){
-      name[0] = 'p' + pi;
-      name[1] = '0' + i;
-      unlink(name);
+    } else {
+      wait(0);
     }
   }
 }
@@ -1450,7 +269,7 @@ unlinkread(char *s)
 ```
 
 ## `linktest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het aanmaken van hard links (`link`), het ontkoppelen (`unlink`) en of de data behouden blijft via de nieuwe link. Controleert ook of linken naar niet-bestaande bestanden of naar zichzelf faalt.
 
 ```c
 
@@ -1655,7 +474,7 @@ linkunlink(char *s)
 ```
 
 ## `subdir()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het aanmaken van diepe directory-structuren, path resolution met `..`, en of directory-operaties (zoals `unlink` op een niet-lege map) correct falen.
 
 ```c
 
@@ -1873,7 +692,7 @@ bigwrite(char *s)
 ```
 
 ## `bigfile()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het schrijven en lezen van een bestand dat groter is dan één blok om indirecte blokken te testen.
 
 ```c
 
@@ -1934,7 +753,7 @@ bigfile(char *s)
 ```
 
 ## `fourteen()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test of de kernel correct omgaat met de maximale lengte van bestandsnamen (14 karakters, gedefinieerd door `DIRSIZ`).
 
 ```c
 
@@ -1987,7 +806,7 @@ fourteen(char *s)
 ```
 
 ## `rmdot()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert of het verboden is om de speciale mappen `.` (huidige map) en `..` (ouder-map) te verwijderen via `unlink`.
 
 ```c
 
@@ -2031,7 +850,7 @@ rmdot(char *s)
 ```
 
 ## `dirfile()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test de scheiding tussen bestanden en mappen; controleert of je niet kunt `chdir` naar een bestand en of mappen niet geopend kunnen worden met schrijfrechten.
 
 ```c
 
@@ -2081,6 +900,7 @@ dirfile(char *s)
   if(fd >= 0){
     printf("%s: open . for writing succeeded!\n", s);
     exit(1);
+  }
   }
   fd = open(".", 0);
   if(write(fd, "x", 1) > 0){
@@ -2177,7 +997,7 @@ forktest(char *s)
 ```
 
 ## `sbrkbasic()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Basis-test voor de `sbrk` systeemoproep; controleert of geheugenallocatie boven de fysieke limiet faalt en of kleine allocaties (minder dan een pagina) correct werken.
 
 ```c
 
@@ -2248,7 +1068,7 @@ sbrkbasic(char *s)
 ```
 
 ## `sbrkmuch()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het reserveren van een grote hoeveelheid virtueel geheugen en controleert of deallocatie (negatieve `sbrk`) de pagina's daadwerkelijk vrijgeeft.
 
 ```c
 
@@ -2478,7 +1298,7 @@ sbrkarg(char *s)
 ```
 
 ## `validatetest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Probeert de kernel te laten crashen door ongeldige pointers (bijv. buiten het user-bereik) door te geven aan systeemoproepen zoals `link`.
 
 ```c
 
@@ -2622,7 +1442,7 @@ fsfull()
 ```
 
 ## `argptest()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test of systeemoproepen zoals `read` correct omgaan met pointers die net op de grens van het toegewezen user-geheugen liggen.
 
 ```c
 
@@ -2921,7 +1741,7 @@ lazy_unmap(char *s)
 ```
 
 ## `lazy_copy()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test de correcte werking van Copy-on-Write of Lazy Allocation wanneer systeemoproepen (zoals `open`) data proberen te lezen van pagina's die nog niet fysiek gealloceerd zijn.
 
 ```c
 
@@ -2971,7 +1791,7 @@ lazy_copy(char *s)
 ```
 
 ## `lazy_sbrk()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test of `sbrk` (of `sbrklazy`) correct grote hoeveelheden geheugen kan reserveren tot aan de `MAXVA` grens en of het geheugen correct ge-zero-vuld is.
 
 ```c
 
@@ -3296,7 +2116,7 @@ diskfull(char *s)
 ```
 
 ## `outofinodes()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Test het gedrag van het bestandssysteem wanneer de limiet van het aantal inodes is bereikt door een groot aantal kleine bestanden aan te maken.
 
 ```c
 
@@ -3356,7 +2176,7 @@ countfree()
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: De entry-point voor de user tests; verwerkt command-line argumenten om specifieke tests uit te voeren of alle tests in een lus te draaien.
 
 ```c
 
@@ -3387,4 +2207,3 @@ main(int argc, char *argv[])
 }
 
 ```
-

@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/printf.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `putc()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpprogramma dat een enkel karakter naar een opgegeven bestandsbeschrijving schrijft.
 
 ```c
 #include "kernel/types.h"
@@ -23,7 +23,7 @@ putc(int fd, char c)
 ```
 
 ## `printint()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpprogramma dat een integer omzet naar een string in een opgegeven grondtal en deze afdrukt.
 
 ```c
 
@@ -127,7 +127,7 @@ vprintf(int fd, const char *fmt, va_list ap)
 ```
 
 ## `fprintf()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Formateert en schrijft tekst naar een opgegeven bestandsbeschrijving.
 
 ```c
 
@@ -143,7 +143,7 @@ fprintf(int fd, const char *fmt, ...)
 ```
 
 ## `printf()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Formateert en schrijft tekst naar de standaarduitvoer (fd 1).
 
 ```c
 

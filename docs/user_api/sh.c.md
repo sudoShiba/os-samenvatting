@@ -85,7 +85,7 @@ runcmd(struct cmd *cmd)
 ```
 
 ## `getcmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest een invoerregel van de console naar een opgegeven buffer.
 
 ```c
 
@@ -103,7 +103,7 @@ getcmd(char *buf, int nbuf)
 ```
 
 ## `processline()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Verwerkt een enkele commandoregel; herkent het 'cd' commando of voert andere commando's uit in een nieuw proces.
 
 ```c
 
@@ -130,7 +130,7 @@ processline(char* buf)
 ```
 
 ## `execute_script()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Opent een scriptbestand en voert alle commando's in dat bestand regel voor regel uit.
 
 ```c
 
@@ -161,7 +161,7 @@ execute_script(const char* path)
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: De hoofdloop van de shell die de console initialiseert, eventueel een initialisatiescript uitvoert en daarna interactief commando's leest en verwerkt.
 
 ```c
 
@@ -192,7 +192,7 @@ main(void)
 ```
 
 ## `panic()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Drukt een foutmelding af naar stderr en sluit de shell af met een foutstatus.
 
 ```c
 
@@ -206,7 +206,7 @@ panic(char *s)
 ```
 
 ## `fork1()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Een wrapper rond de fork-systeemaanroep die een panic veroorzaakt als het forken mislukt.
 
 ```c
 
@@ -242,7 +242,7 @@ execcmd(void)
 ```
 
 ## `redircmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Creëert een commando-structuur voor I/O-omleiding naar een bestand.
 
 ```c
 
@@ -265,7 +265,7 @@ redircmd(struct cmd *subcmd, char *file, char *efile, int mode, int fd)
 ```
 
 ## `pipecmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Creëert een commando-structuur voor een pijplijn tussen twee commando's.
 
 ```c
 
@@ -285,7 +285,7 @@ pipecmd(struct cmd *left, struct cmd *right)
 ```
 
 ## `listcmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Creëert een commando-structuur voor een lijst van opeenvolgend uit te voeren commando's.
 
 ```c
 
@@ -305,7 +305,7 @@ listcmd(struct cmd *left, struct cmd *right)
 ```
 
 ## `backcmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Creëert een commando-structuur voor een commando dat in de achtergrond moet worden uitgevoerd.
 
 ```c
 
@@ -379,7 +379,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
 ```
 
 ## `peek()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Controleert of het volgende niet-witruimte teken in de string voorkomt in een set tokens, zonder het te consumeren.
 
 ```c
 
@@ -398,7 +398,7 @@ peek(char **ps, char *es, char *toks)
 ```
 
 ## `parsecmd()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdfunctie voor het parsen van een commandoregel naar een boom van commando-structuren.
 
 ```c
 
@@ -427,7 +427,7 @@ parsecmd(char *s)
 ```
 
 ## `parseline()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Parsed een volledige commandoregel, inclusief achtergrondprocessen (&) en lijst-commando's (;).
 
 ```c
 
@@ -451,7 +451,7 @@ parseline(char **ps, char *es)
 ```
 
 ## `parsepipe()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Parsed een pijplijn-constructie (|) uit de commando-invoer.
 
 ```c
 
@@ -471,7 +471,7 @@ parsepipe(char **ps, char *es)
 ```
 
 ## `parseredirs()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Zoekt naar en parsed I/O-omleidingen (<, >, >>) voor een specifiek commando.
 
 ```c
 
@@ -503,7 +503,7 @@ parseredirs(struct cmd *cmd, char **ps, char *es)
 ```
 
 ## `parseblock()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Parsed een blok met commando's die tussen haakjes staan ( ).
 
 ```c
 
@@ -526,7 +526,7 @@ parseblock(char **ps, char *es)
 ```
 
 ## `parseexec()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Parsed een enkel uitvoerbaar commando inclusief de bijbehorende argumenten en omleidingen.
 
 ```c
 

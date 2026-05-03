@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `user/cat.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `cat()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest data uit een bestandsbeschrijvingsnummer en schrijft deze naar de standaarduitvoer (stdout).
 
 ```c
 #include "kernel/types.h"
@@ -32,7 +32,7 @@ cat(int fd)
 ```
 
 ## `main()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hoofdprogramma voor de cat-utility; opent bestanden of leest van de standaardinvoer en roept de cat-functie aan.
 
 ```c
 

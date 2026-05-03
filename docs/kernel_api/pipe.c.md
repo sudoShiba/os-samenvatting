@@ -3,7 +3,7 @@
 Dit bestand bevat de implementaties voor `kernel/pipe.c`. Hieronder vind je de uitleg en de broncode van **elke functie** in dit bestand.
 
 ## `pipealloc()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Maakt een nieuwe pipe aan en wijst twee bestandstabel-ingangen toe voor de lees- en schrijfzijde.
 
 ```c
 
@@ -46,7 +46,7 @@ pipealloc(struct file **f0, struct file **f1)
 ```
 
 ## `pipeclose()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Sluit een zijde van de pipe en maakt de pipe-structuur vrij als beide zijden zijn gesloten.
 
 ```c
 
@@ -71,7 +71,7 @@ pipeclose(struct pipe *pi, int writable)
 ```
 
 ## `pipewrite()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Schrijft data naar de pipe-buffer en maakt wachtende lezers wakker.
 
 ```c
 
@@ -111,7 +111,7 @@ pipewrite(struct pipe *pi, int user_src, uint64 addr, int n)
 ```
 
 ## `piperead()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Leest data uit de pipe-buffer en maakt wachtende schrijvers wakker als er ruimte vrijkomt.
 
 ```c
 

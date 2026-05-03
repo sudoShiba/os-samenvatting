@@ -46,7 +46,7 @@ fdalloc(struct file *f)
 ```
 
 ## `sys_dup()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die een nieuw bestandsbeschrijvingsnummer (file descriptor) aanmaakt voor een bestaand open bestand.
 
 ```c
 
@@ -67,7 +67,7 @@ sys_dup(void)
 ```
 
 ## `sys_read()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om data te lezen uit een bestand of apparaat naar een buffer.
 
 ```c
 
@@ -88,7 +88,7 @@ sys_read(void)
 ```
 
 ## `sys_write()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om data vanuit een buffer naar een bestand of apparaat te schrijven.
 
 ```c
 
@@ -110,7 +110,7 @@ sys_write(void)
 ```
 
 ## `sys_close()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een open bestandsbeschrijvingsnummer te sluiten.
 
 ```c
 
@@ -130,7 +130,7 @@ sys_close(void)
 ```
 
 ## `sys_fstat()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die metadata over een open bestand (zoals grootte en type) ophaalt.
 
 ```c
 
@@ -225,7 +225,7 @@ isdirempty(struct inode *dp)
 ```
 
 ## `sys_unlink()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een bestandsnaam uit het bestandssysteem te verwijderen; verwijdert de inode als dit de laatste link was.
 
 ```c
 
@@ -289,7 +289,7 @@ bad:
 ```
 
 ## `create()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Hulpsubroutine die een nieuwe inode aanmaakt voor een bestand, directory of apparaat op een opgegeven pad.
 
 ```c
 
@@ -355,7 +355,7 @@ create(char *path, short type, short major, short minor)
 ```
 
 ## `sys_open()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een bestand te openen of aan te maken en een bestandsbeschrijvingsnummer te retourneren.
 
 ```c
 
@@ -431,7 +431,7 @@ sys_open(void)
 ```
 
 ## `sys_mkdir()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een nieuwe directory aan te maken.
 
 ```c
 
@@ -454,7 +454,7 @@ sys_mkdir(void)
 ```
 
 ## `sys_mknod()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om een nieuw apparaatbestand (device file) aan te maken.
 
 ```c
 
@@ -481,7 +481,7 @@ sys_mknod(void)
 ```
 
 ## `sys_chdir()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep om de huidige werkdirectory van het proces te wijzigen.
 
 ```c
 
@@ -513,7 +513,7 @@ sys_chdir(void)
 ```
 
 ## `sys_exec()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die het huidige proces vervangt door een nieuw programma dat vanaf schijf wordt geladen.
 
 ```c
 
@@ -563,7 +563,7 @@ sys_exec(void)
 ```
 
 ## `sys_pipe()`
-> Geen specifieke commentaar in de broncode.
+> [Geen commentaar in broncode]: Systeemaanroep die een nieuwe pipe aanmaakt en twee bestandsbeschrijvingsnummers retourneert.
 
 ```c
 
