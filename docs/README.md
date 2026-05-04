@@ -15,6 +15,8 @@ Welcome to the comprehensive documentation for the xv6 labs at KU Leuven. This s
 ## Reference Material
 
 - [Key Files](key-files.md)
+- [Locking Guide](locking-guide.md)
+- [Boilerplate & Templates](boilerplate-templates.md)
 - [Summary of Labs](summary.md)
 - [Decision Guide](decision-guide.md)
 - [Pitfalls](pitfalls.md)

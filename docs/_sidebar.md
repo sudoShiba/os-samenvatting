@@ -27,9 +27,10 @@
   * [User Program Toevoegen](adding-user-program.md)
   * [User Library Toevoegen](adding-lib-function.md)
   * [Kernel Helpers](kernel-helpers.md)
+  * [Locking Guide](locking-guide.md)
+  * [Boilerplate & Templates](boilerplate-templates.md)
 
-* **API Reference**
-  * [Process API (fork, etc.)](process-api.md)
+  * [**API Reference**]  * [Process API (fork, etc.)](process-api.md)
   * [Memory & File API](memory-file-api.md)
 
 * **Source Code API**
