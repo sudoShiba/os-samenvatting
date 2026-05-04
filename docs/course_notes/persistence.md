@@ -38,7 +38,23 @@ How do we organize data and metadata on the raw disk blocks?
 - **Inode Table:** An array of inodes on disk.
 - **Data Region:** The actual blocks storing user data.
 
-![The Ext2 Inode Layout](https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf) *(OSTEP Reference)*
+### The Ext2 Inode Layout
+In place of a broken image, here is the structure of an Ext2-style inode:
+
+| Field | Description |
+| :--- | :--- |
+| **Mode** | File type and access permissions (read/write/exec). |
+| **Owner Info** | UID/GID of the file owner. |
+| **Size** | Size of the file in bytes. |
+| **Timestamps** | Atime, Mtime, Ctime (Access, Modification, Change). |
+| **Links Count** | Number of hard links pointing to this inode. |
+| **Blocks Count** | Number of disk blocks used by the file. |
+| **Direct Blocks** | 12 pointers directly to data blocks. |
+| **Single Indirect** | Pointer to a block containing more data block pointers. |
+| **Double Indirect** | Pointer to a block containing pointers to indirect blocks. |
+| **Triple Indirect** | Pointer to a block containing pointers to double indirect blocks. |
+
+*(Reference: OSTEP File System Implementation)*
 
 ### The Inode (Index Node)
 The inode stores all **metadata** about a file:

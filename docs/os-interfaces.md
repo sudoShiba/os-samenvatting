@@ -61,13 +61,45 @@ if (pid > 0) {
 ```
 
 ## 3. Pipe Redirection
-Redirecting output of one process to the input of another.
+Pipes worden gebruikt voor inter-proces communicatie (IPC). Een pipe heeft twee uiteinden: een lees-kant (`p[0]`) en een schrijf-kant (`p[1]`).
+
+### Stappenplan: Pipe gebruiken tussen Parent en Child
+1. **Pipe aanmaken:** Doe dit *voor* de `fork()`.
+2. **Forken:** Beide processen erven de file descriptors van de pipe.
+3. **Onnodige kanten sluiten:**
+   - De zender sluit de lees-kant (`p[0]`).
+   - De ontvanger sluit de schrijf-kant (`p[1]`).
+4. **Data versturen/ontvangen:** Gebruik `write()` en `read()`.
+5. **Afsluiten:** Sluit de resterende descriptors.
+
+**Voorbeeld: Child stuurt bericht naar Parent**
+```c
+int p[2];
+char buf[32];
+pipe(p); // 1. Aanmaken
+
+if(fork() == 0){ // 2. Forken
+  close(p[0]); // 3. Child gaat schrijven, sluit lezen
+  write(p[1], "hello parent", 12); // 4. Schrijven
+  close(p[1]); // 5. Klaar
+  exit(0);
+} else {
+  close(p[1]); // 3. Parent gaat lezen, sluit schrijven
+  read(p[0], buf, sizeof(buf)); // 4. Lezen
+  printf("Received: %s\n", buf);
+  close(p[0]); // 5. Klaar
+  wait(0);
+}
+```
+
+### Pipe Redirection (Shell-stijl)
+Redirecting output van de ene `exec` naar de input van de andere.
 ```c
 int p[2];
 pipe(p);
 if(fork() == 0){
-  close(0);     // Close stdin
-  dup(p[0]);    // Duplicate pipe read end to stdin
+  close(0);     // Sluit standaard input
+  dup(p[0]);    // Dupliceer pipe-lees-kant naar fd 0 (stdin)
   close(p[0]);
   close(p[1]);
   exec("wc", args);

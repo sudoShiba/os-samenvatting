@@ -3,14 +3,26 @@
 De disk in xv6 is opgedeeld in blokken van **1024 bytes** (BSIZE).
 
 ## 0. Disk Layout & Inode Limits
-De disklayout bepaalt waar welk soort data staat:
+De disk in xv6 is opgedeeld in blokken van **1024 bytes** (BSIZE). De disklayout bepaalt waar welk soort data staat:
 `[ boot | super | log | inodes | bit map | data ... ]`
-- **boot:** Bevat de boot code (blok 0).
-- **super:** Bevat metainformatie over het bestandssysteem.
-- **log:** Transacties voor consistentie bij crashes.
-- **inodes:** Bevat alle kenmerken (type, grootte, locatie) van bestanden.
-- **bitmap:** Houdt bij welke datablokken bezet zijn.
-- **data:** De eigenlijke inhoud van de bestanden.
+
+### 1. Het Boot Blok (Blok 0)
+Het boot blok bevindt zich altijd op de allereerste sector van de schijf (blok 0).
+- **De Bootloader:** Dit blok bevat de machinecode die nodig is om het besturingssysteem te laden. Wanneer de computer opstart, leest de hardware (BIOS/UEFI) dit blok in het geheugen en voert het de code uit.
+- **Gereserveerde ruimte:** Zelfs als een partitie geen besturingssysteem bevat dat opgestart moet worden, blijft dit blok gereserveerd om de uniformiteit van de layout te bewaren.
+- **Partitietabel:** In sommige gevallen (zoals bij de Master Boot Record of MBR) bevat dit blok ook informatie over hoe de schijf in partities is verdeeld.
+
+### 2. Het Super Blok (Blok 1)
+Het super blok is het "brein" van het bestandssysteem. Het bevat de metadata die beschrijft hoe de rest van de schijf is ingedeeld. Zonder het super blok weet het OS niet waar de bestanden beginnen of eindigen.
+Het bevat doorgaans de volgende gegevens:
+- **Magic Number:** Een specifiek getal (bijv. 0x10203040) waarmee het OS kan verifiëren dat de schijf inderdaad geformatteerd is met dit specifieke bestandssysteem.
+- **Bestandssysteem Grootte:** Het totaal aantal blokken op de schijf.
+- **Aantal Inodes:** Hoeveel inodes er in totaal beschikbaar zijn (dit bepaalt het maximum aantal bestanden dat je kunt maken).
+- **Log Informatie:** De locatie en grootte van het log-gedeelte (voor crash recovery).
+- **Sectie-offsets:** Het vertelt het systeem precies op welk bloknummer de andere secties beginnen:
+    - Waar beginnen de inodes?
+    - Waar begint de bit map (vrije ruimte administratie)?
+    - Waar begint de data sectie?
 
 ### Inode Blokken & Bestandsgrootte (Lab 2025 Config)
 Een `dinode` (on-disk inode) in deze versie heeft:
