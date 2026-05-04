@@ -8,11 +8,99 @@
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css">
   <style>
     :root {
-      --theme-color: #42b983;
+      --theme-color: #5ccfe6; /* Modern Blue */
+      --base-background: #1e2227;
+      --sidebar-background: #21252b;
+      --text-color: #abb2bf;
     }
-    .sidebar { background-color: #282c34; border-right: 1px solid #3e4451; }
-    code { background-color: #2c313a !important; color: #abb2bf !important; }
-    pre { background-color: #282c34 !important; }
+
+    body {
+      background-color: var(--base-background);
+      color: var(--text-color);
+    }
+
+    /* Sidebar Improvements */
+    .sidebar {
+      background-color: var(--sidebar-background);
+      border-right: 1px solid #3e4451;
+    }
+    .sidebar-nav li a {
+      color: #abb2bf !important;
+    }
+    .sidebar-nav li a:hover {
+      color: var(--theme-color) !important;
+    }
+    .sidebar-nav li.active > a {
+      border-right: 2px solid var(--theme-color);
+      color: var(--theme-color) !important;
+      font-weight: bold;
+    }
+
+    /* Table Fixes - Making sure all rows are visible */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #282c34;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    th {
+      background-color: #3e4451 !important;
+      color: #ffffff !important;
+      padding: 12px !important;
+      border-bottom: 2px solid #5ccfe6;
+    }
+    td {
+      padding: 12px !important;
+      border-bottom: 1px solid #3e4451;
+      color: #dcdfe4;
+    }
+    /* Fixing the visibility issue: subtle zebra striping */
+    tr:nth-child(even) {
+      background-color: #2c313a;
+    }
+    tr:nth-child(odd) {
+      background-color: #21252b;
+    }
+    tr:hover {
+      background-color: #323842 !important;
+    }
+
+    /* Code Block Improvements */
+    code {
+      background-color: #2c313a !important;
+      color: #e06c75 !important; /* Soft Red for inline code */
+      padding: 2px 4px !important;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #282c34 !important;
+      border: 1px solid #3e4451;
+      border-radius: 6px;
+      padding: 15px !important;
+    }
+    pre code {
+      color: #abb2bf !important;
+      background-color: transparent !important;
+      padding: 0 !important;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e2227;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3e4451;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4b5263;
+    }
   </style>
 </head>
 <body>

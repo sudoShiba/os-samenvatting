@@ -1,8 +1,8 @@
 <!-- docs/_sidebar.md -->
 
-* [Home](README.md)
+* [🏠 Home](README.md)
 
-* **Lab Sessies**
+* **🚀 Lab Sessies**
   * [Lab 1: OS Interfaces](os-interfaces.md)
   * [Lab 2: System Calls](syscalls-lab.md)
   * [Lab 3: Context Switch](context-switch.md)
@@ -11,30 +11,38 @@
   * [Lab 6: File Systems](file-systems.md)
   * [Lab 7: Advanced VM](advanced-vm.md)
 
-* [**Course Notes**](course_notes/README.md)
-  * [Virtualization](course_notes/virtualization.md)
-  * [Concurrency](course_notes/concurrency.md)
-  * [Persistence](course_notes/persistence.md)
-
-* **Architecture & Guides**
-  * [Traps & Trampoline](traps-trampoline.md)
-  * [Trapframe Offsets](trapframe-offsets.md)
-  * [Calling Conventions](calling-conventions.md)
-  * [Per-Process State](per-process-state.md)
-  * [Key Files](key-files.md)
+* **🛠️ Implementatie Gidsen**
   * [Syscall Toevoegen](adding-syscall.md)
   * [vDSO Toevoegen](adding-vdso.md)
   * [User Program Toevoegen](adding-user-program.md)
   * [User Library Toevoegen](adding-lib-function.md)
-  * [Kernel Helpers](kernel-helpers.md)
-  * [Locking Guide](locking-guide.md)
   * [Boilerplate & Templates](boilerplate-templates.md)
 
-  * [**API Reference**]  * [Process API (fork, etc.)](process-api.md)
-  * [Memory & File API](memory-file-api.md)
+* **🧠 Kernconcepten**
+  * [Locking Guide](locking-guide.md)
+  * [Traps & Trampoline](traps-trampoline.md)
+  * [Trapframe Offsets](trapframe-offsets.md)
+  * [Calling Conventions](calling-conventions.md)
+  * [Per-Process State](per-process-state.md)
+  * [Kernel Helpers](kernel-helpers.md)
 
-* **Source Code API**
-  * **Kernel Space**
+* **🎓 Examen Voorbereiding**
+  * [Exam Strategy](exam-strategy.md)
+  * [Lab Samenvatting](summary.md)
+  * [Decision Guide](decision-guide.md)
+  * [Common Pitfalls](pitfalls.md)
+
+* **📜 API Referentie**
+  * [Process API (fork, etc.)](process-api.md)
+  * [Memory & File API](memory-file-api.md)
+  * [Course Notes](course_notes/README.md)
+    * [Virtualization](course_notes/virtualization.md)
+    * [Concurrency](course_notes/concurrency.md)
+    * [Persistence](course_notes/persistence.md)
+
+* **🔍 Broncode Analyse**
+  * [Kernel Files Overzicht](key-files.md)
+  * **Kernel API**
     * [bio.c](kernel_api/bio.c.md)
     * [console.c](kernel_api/console.c.md)
     * [exec.c](kernel_api/exec.c.md)
@@ -58,7 +66,7 @@
     * [uart.c](kernel_api/uart.c.md)
     * [virtio_disk.c](kernel_api/virtio_disk.c.md)
     * [vm.c](kernel_api/vm.c.md)
-  * **User Code**
+  * **User API**
     * [cat.c](user_api/cat.c.md)
     * [dorphan.c](user_api/dorphan.c.md)
     * [echo.c](user_api/echo.c.md)
@@ -82,9 +90,3 @@
     * [usertests.c](user_api/usertests.c.md)
     * [wc.c](user_api/wc.c.md)
     * [zombie.c](user_api/zombie.c.md)
-
-* **Referentie**
-  * [Exam Strategy](exam-strategy.md)
-  * [Summary of Labs](summary.md)
-  * [Decision Guide](decision-guide.md)
-  * [Common Pitfalls](pitfalls.md)
