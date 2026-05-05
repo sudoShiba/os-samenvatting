@@ -25,6 +25,7 @@
   * [Calling Conventions](calling-conventions.md)
   * [Per-Process State](per-process-state.md)
   * [Kernel Helpers](kernel-helpers.md)
+  * [scause Referentie](scause-reference.md)
 
 * **🎓 Examen Voorbereiding**
   * [Exam Strategy](exam-strategy.md)

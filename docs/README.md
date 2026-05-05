@@ -44,8 +44,9 @@ Bereid je voor op het examen met deze samenvattingen en gidsen:
 ## 🔍 Snelzoeken
 
 Zoek je een specifieke functie of bestand?
-*   [Kernel Helpers](kernel-helpers.md): `copyin`, `copyout`, `argint`, etc.
-*   [Key Files](key-files.md): Wat doet `proc.c`, `fs.c`, of `vm.c` precies?
+* [Kernel Helpers](kernel-helpers.md): `copyin`, `copyout`, `argint`, etc.
+* [scause Referentie](scause-reference.md): Overzicht van RISC-V exception codes.
+* [Key Files](key-files.md): Wat doet `proc.c`, `fs.c`, of `vm.c` precies?
 *   [API Referentie](process-api.md): Overzicht van syscalls en kernel interfaces.
 
 ---
