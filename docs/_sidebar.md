@@ -43,7 +43,7 @@
 
 * **🔍 Broncode Analyse**
   * [Kernel Files Overzicht](key-files.md)
-  * **Kernel API**
+  * **Kernel space**
     * [bio.c](kernel_api/bio.c.md)
     * [console.c](kernel_api/console.c.md)
     * [exec.c](kernel_api/exec.c.md)
@@ -67,7 +67,7 @@
     * [uart.c](kernel_api/uart.c.md)
     * [virtio_disk.c](kernel_api/virtio_disk.c.md)
     * [vm.c](kernel_api/vm.c.md)
-  * **User API**
+  * **User space**
     * [cat.c](user_api/cat.c.md)
     * [dorphan.c](user_api/dorphan.c.md)
     * [echo.c](user_api/echo.c.md)
